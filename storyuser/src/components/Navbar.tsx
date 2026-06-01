@@ -63,9 +63,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             aria-label="STORY home"
           >
             <img
-              src="/story-logo-transparent.png"
+              src="/story-logo-candidate.png"
               alt="STORY"
-              className="h-20 w-44 object-contain brightness-0 invert sm:h-24 sm:w-56 lg:h-28 lg:w-64"
+              className="h-20 w-44 scale-110 object-contain brightness-0 invert sm:h-24 sm:w-56 sm:scale-115 lg:h-28 lg:w-64 lg:scale-125"
             />
           </button>
 

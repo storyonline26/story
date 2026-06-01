@@ -3,11 +3,11 @@ import React from 'react';
 const brandLogos = [
   { name: 'Versace', src: '/brand-logos/versace.svg' },
   { name: 'Karl Lagerfeld', src: '/brand-logos/karl-lagerfeld.png' },
-  { name: 'Lacoste', src: '/brand-logos/lacoste.svg' },
+  { name: 'Lacoste', src: '/brand-logos/lacoste.png' },
   { name: 'Superdry', src: '/brand-logos/superdry.svg' },
   { name: 'Tommy Hilfiger', src: '/brand-logos/tommy-hilfiger.svg' },
   { name: 'Burberry', src: '/brand-logos/burberry.svg' },
-  { name: 'True Religion', src: '/brand-logos/true-religion.png' },
+  { name: 'True Religion', src: '/brand-logos/true-religion.svg' },
   { name: 'Rare Rabbit', src: '/brand-logos/rare-rabbit.png' },
   { name: 'Blackberrys', src: '/brand-logos/blackberrys.png' },
   { name: 'Zara', src: '/brand-logos/zara.svg' },
