@@ -14,7 +14,7 @@ export const setAuthCookie = (res, token) => {
   res.cookie('token', token, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     domain: env.cookieDomain,
     maxAge: 7 * 24 * 60 * 60 * 1000
   });
@@ -24,7 +24,7 @@ export const setAdminAuthCookie = (res, token) => {
   res.cookie('admin_token', token, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     domain: env.cookieDomain,
     maxAge: 7 * 24 * 60 * 60 * 1000
   });
@@ -34,7 +34,7 @@ export const clearAuthCookie = (res) => {
   res.clearCookie('token', {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     domain: env.cookieDomain
   });
 };
@@ -43,7 +43,7 @@ export const clearAdminAuthCookie = (res) => {
   res.clearCookie('admin_token', {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     domain: env.cookieDomain
   });
 };
