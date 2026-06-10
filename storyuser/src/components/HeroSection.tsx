@@ -12,10 +12,10 @@ export function HeroSection({ content, onShopEdit, onViewLookbook }: HeroSection
   return (
     <section
       className="relative mx-auto flex max-w-[1280px] items-center px-5 sm:px-6 lg:px-8"
-      style={{ minHeight: 'min(680px, calc(100vh - 140px))' }}
+      style={{ minHeight: 'min(560px, calc(100vh - 180px))' }}
       id="editorial-hero"
     >
-      <div className="grid w-full grid-cols-1 items-center gap-8 py-10 lg:grid-cols-[0.45fr_0.55fr] lg:gap-12 lg:py-0">
+      <div className="grid w-full grid-cols-1 items-center gap-6 py-6 lg:grid-cols-[0.45fr_0.55fr] lg:gap-12 lg:py-0">
 
         {/* Left: content */}
         <div className="max-w-[480px]">

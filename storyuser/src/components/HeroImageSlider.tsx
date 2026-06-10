@@ -33,12 +33,12 @@ export function HeroImageSlider({ images = [] }: HeroImageSliderProps) {
   }, [slides.length]);
 
   return (
-    <div className="relative w-full max-w-[520px] mx-auto lg:max-w-none lg:ml-auto">
+    <div className="relative w-full max-w-[520px] mx-auto lg:max-w-none lg:ml-auto overflow-hidden">
       {/* Subtle depth frame */}
       <div className="absolute -inset-3 hidden rounded-sm bg-[#EFECE6] lg:block" />
 
       {/* Main image container */}
-      <div className="relative aspect-[3/4] w-full max-h-[580px] overflow-hidden border border-[#DDD8CF] bg-[#EFECE6]">
+      <div className="relative aspect-[3/4] w-full max-h-[500px] overflow-hidden border border-[#DDD8CF] bg-[#EFECE6]">
         {slides.map((slide, index) => (
           <img
             key={slide.src}

@@ -99,3 +99,9 @@ Thumbs.db
 # Uploads (keep structure but ignore content)
 backend/uploads/*
 !backend/uploads/.gitkeep
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+.auth/

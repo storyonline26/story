@@ -55,7 +55,7 @@ export const ShopView: React.FC<ShopViewProps> = ({ onSelectProduct, setActiveSc
       <BrandLogoMarquee />
 
       {/* 3. Shop by Category */}
-      <section className="mx-auto max-w-[1280px] px-5 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20" id="our-products-section">
+      <section className="mx-auto max-w-[1280px] px-5 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16" id="our-products-section">
         <SectionHeader
           eyebrow={content.productsEyebrow || 'Shop by Category'}
           title={content.productsTitle || 'Our Products'}
@@ -109,7 +109,7 @@ export const ShopView: React.FC<ShopViewProps> = ({ onSelectProduct, setActiveSc
 
       {/* 4. Featured Products */}
       {featuredProducts.length > 0 && (
-        <section className="bg-white py-14 sm:py-16 lg:py-20">
+        <section className="bg-white py-12 sm:py-14 lg:py-16">
           <div className="mx-auto max-w-[1280px] px-5 sm:px-6 lg:px-8">
             <SectionHeader eyebrow="New Arrivals" title="Featured Pieces" description="Hand-picked from our latest collection." />
 
@@ -123,7 +123,7 @@ export const ShopView: React.FC<ShopViewProps> = ({ onSelectProduct, setActiveSc
       )}
 
       {/* 5. Trust Section */}
-      <section className="bg-[#F8F6F1] py-12 sm:py-14 lg:py-16">
+      <section className="bg-[#F8F6F1] py-10 sm:py-12 lg:py-14">
         <div className="mx-auto max-w-[1280px] px-5 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
             <TrustCard icon={CheckCircle2} title="Verified Authentic" description="Every piece is brand-verified before listing." />
@@ -138,7 +138,7 @@ export const ShopView: React.FC<ShopViewProps> = ({ onSelectProduct, setActiveSc
       <CustomerNotesSection />
 
       {/* 7. Editorial CTA */}
-      <section className="bg-[#111111] py-14 sm:py-16 lg:py-20">
+      <section className="bg-[#111111] py-12 sm:py-14 lg:py-16">
         <div className="mx-auto max-w-[1280px] px-5 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto]">
             <div>

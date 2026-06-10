@@ -653,6 +653,26 @@ export default function App() {
             onBack={() => navigateTo('shop')}
             onOpenCategory={handleOpenCategory}
             onSelectProduct={handleSelectProduct}
+            onAddToCart={(product) => {
+              const defaultSize = product.sizes?.[0] || 'O/S';
+              const defaultColor = product.colors?.[0] || { name: 'Default', hex: '#111111' };
+              const combinedId = `${product.id}-${defaultSize}-${defaultColor.name.toLowerCase()}`;
+              const existing = cartItems.find(item => item.id === combinedId);
+              if (existing) {
+                handleUpdateQuantity(combinedId, 1);
+              } else {
+                setCartItems(prev => [...prev, {
+                  id: combinedId,
+                  product,
+                  selectedSize: defaultSize,
+                  selectedColor: defaultColor,
+                  quantity: 1
+                }]);
+              }
+            }}
+            cartItems={cartItems}
+            onUpdateQuantity={handleUpdateQuantity}
+            onRemoveItem={handleRemoveItem}
           />
         )}
 

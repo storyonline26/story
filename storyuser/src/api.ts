@@ -209,8 +209,6 @@ const mapStorefrontContent = (settings: any): StorefrontContent => ({
   razorpayActive: asBoolean(settings.razorpay_active, true),
   onlinePaymentEnabled: asBoolean(settings.online_payment_enabled, true),
   codEnabled: asBoolean(settings.cod_enabled, false),
-  onlinePaymentEnabled: asBoolean(settings.online_payment_enabled, true),
-  codEnabled: asBoolean(settings.cod_enabled, false),
   privacyPolicy: settings.privacy_policy || 'We respect your privacy and use customer information only to process orders, provide support, improve the shopping experience, and meet legal or payment requirements. We do not sell customer data. Payment information is processed securely by our payment partners.',
   termsConditions: settings.terms_conditions || 'By using STORY India, you agree to provide accurate account, delivery, and payment information. Product availability, pricing, promotions, and delivery timelines may change without prior notice. Orders are confirmed only after successful payment and verification.',
   returnRefundPolicy: settings.return_refund_policy || 'Returns or exchanges may be requested for eligible unused products within the return window shown at purchase. Items must be returned with tags, packaging, and invoice. Refunds are processed to the original payment method after quality check approval.'

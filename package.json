@@ -11,9 +11,40 @@
     "build": "npm --prefix storyuser run build && npm --prefix story-luxury-admin run build",
     "lint": "npm --prefix storyuser run lint && npm --prefix story-luxury-admin run lint",
     "backend:migrate": "npm --prefix backend run prisma:migrate -- --name init",
-    "backend:seed": "npm --prefix backend run seed"
+    "backend:seed": "npm --prefix backend run seed",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:api": "playwright test tests/api",
+    "test:frontend": "playwright test tests/ui",
+    "test:admin": "playwright test tests/admin",
+    "test:performance": "playwright test tests/performance",
+    "test:security": "playwright test tests/security",
+    "test:chrome": "playwright test --project=chromium",
+    "test:mobile": "playwright test --project=\"Mobile Chrome\" --project=\"Mobile Safari\"",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report playwright-report",
+    "test:screenshots": "playwright test tests/ui/visual-screenshots.spec.ts --project=chromium",
+    "test:screenshots:update": "playwright test tests/ui/visual-screenshots.spec.ts --project=chromium --update-snapshots",
+    "test:a11y": "playwright test tests/ui/a11y-audit.spec.ts --project=chromium",
+    "test:links": "playwright test tests/ui/broken-links.spec.ts --project=chromium",
+    "test:bundle": "playwright test tests/performance/bundle-size.spec.ts --project=chromium",
+    "test:deps": "playwright test tests/security/dependency-audit.spec.ts --project=chromium",
+    "test:cross-browser": "playwright test tests/ui/cross-browser.spec.ts",
+    "test:cross-browser:update": "playwright test tests/ui/cross-browser.spec.ts --update-snapshots",
+    "test:load": "k6 run tests/load/store-load-test.js",
+    "test:record": "playwright codegen http://localhost:3000"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "@axe-core/playwright": "^4.11.3",
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.9.2",
+    "bcryptjs": "^3.0.3",
+    "broken-link-checker-local": "^0.2.1",
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.4.2",
+    "lighthouse": "^13.3.0",
+    "playwright": "^1.60.0",
+    "typescript": "^6.0.3"
   }
 }

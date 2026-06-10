@@ -76,7 +76,7 @@ export const PRODUCTS: Product[] = [
     price: 5990,
     category: "KNITWEAR",
     image: "https://lh3.googleusercontent.com/aida/ADBb0uj8FLb9bsGlG-6QGa20qiQ81oAa0vcQuHGhzq_f4CIIwrMzW9OkwagBvsJmo4mpW_iicufR8hvZ1KpdMVrO-T-hhPyWy17jJ3LNS9VnMCgVjKqvaY_RuXXOCqg46YXyJmwH7RvA6r68Y37qp10t2ua_M7PK6hQiHt6lC3rmCvExbS80JE3Ro2UStfoe_h2HyGaSe7YylrVkinm7Przl1T0AJ84AgHMAuVQUcGhTM4Zy1dXucqx4Y5MFg2Y",
-    secondaryImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
+    secondaryImage: "https://images.unsplash.com/photo-1434389677669-e08b4cead0e2?auto=format&fit=crop&w=800&q=80",
     listImages: [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuD1L-e7kZ7AUAKeYNBfO6v3LkFvdR_dq9o4gRzgzfyVN97f6tPO8zFlzjWooywtA4FmWLWWBJ30XGGD0QV9SbA4zx1NKKtdqhFOr6PE96LOltj2cCUPqFViJLAXd-NIwdzvgJLgAibzn-8RfXF7eU1S74nE_TSg-dJZVBQE0epZlaOKQ1xghSdG6ISfthcmPK7oKcz3BrWFgK07Bx-j1f6d1JcdKbrTVgYPLuhI3sifGw_GtirmzNF_oDqdkFLKuc32cF9SQa6Tzr0"
     ],
@@ -101,7 +101,7 @@ export const PRODUCTS: Product[] = [
     price: 6990,
     category: "DRESSES",
     image: "https://lh3.googleusercontent.com/aida/ADBb0uhyN0ftTAWh3Tfh0E5N4fdflr5eATKQ6Jfc7jugTq3U765-hyIgutRYp_02cCEmXLJveugetSTJM01H7dBUw7yplboo_KxK2b9G0QXcMTVXHxB9iWO5dBOX-gfDZZwuL2sTIKKcxzClyAxPnaAg5F7Nk4BEBHeTgMW9ZgPoXdhqFf7vvpv86Ds4CTmSFlQhM8i5QpOghUiu_f9PC3wvvC9XbRG7CchaPTUVmperlJtYFISoe1-g-cgeGnk",
-    secondaryImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
+    secondaryImage: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=800&q=80",
     listImages: [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCRRyVhS6MgJN8MpmxSTRA87pVQ5gf_Pzf5Gyfdh9xjdKv9nHU_o7f5A3fEx7eytbLPGS1dNaHLa4h36lmkyofl07qyJtwkoXzNAalR80f6PSJPUdyivjVMFTg4ZVVL6MTBy9sI5BdFXVSCeXkAbtsl0PPM6tplQW80D9opqFWawrYI8kAa2MAPS44R0ptAedl-8H4K5Ccx9X-panhluf2aewqjsFvxdNigyxlJ3nnw5jHNfe-T1N7HsGQhDGc-UqnwTGOuSp6XJXc"
     ],
@@ -152,7 +152,7 @@ export const PRODUCTS: Product[] = [
     name: "Silk Blouse",
     price: 5490,
     category: "SHIRTS",
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1564257631407-4deb1f99d992?auto=format&fit=crop&w=800&q=80",
     description: "Draped dolman sleeve blouse featuring organic drop shoulders and narrow buttoned cuffs. Sleek silhouette with high luxury volume.",
     details: [
       "Broad dolman sleeves",
@@ -404,7 +404,7 @@ export const PRODUCTS: Product[] = [
     name: "Gray Tube Top",
     price: 1990,
     category: "TOP",
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80",
     description: "Fine knit heavy stretch tubular shape tube top designed to hug securely and styled with clean silicone tape inside upper hem to stop slip.",
     details: [
       "Integrated hidden support bands",

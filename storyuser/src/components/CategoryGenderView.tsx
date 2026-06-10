@@ -3,15 +3,18 @@ import {
   ArrowLeft,
   ArrowRight,
   Grid2X2,
+  Minus,
   PackageSearch,
+  Plus,
   Ruler,
   ShieldCheck,
+  ShoppingBag,
   SlidersHorizontal,
   Sparkles,
   Truck
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { Category, Product } from '../types';
+import { Category, ColorOption, Product } from '../types';
 import { PRODUCTS } from '../data';
 import { formatINR } from '../utils/currency';
 
@@ -19,9 +22,13 @@ interface CategoryGenderViewProps {
   categorySlug: string;
   categories?: Category[];
   products?: Product[];
+  cartItems?: Array<{ id: string; product: Product; selectedSize: string; selectedColor: ColorOption; quantity: number }>;
   onBack: () => void;
   onOpenCategory?: (categorySlug: string) => void;
   onSelectProduct: (product: Product) => void;
+  onAddToCart?: (product: Product) => void;
+  onUpdateQuantity?: (id: string, delta: number) => void;
+  onRemoveItem?: (id: string) => void;
 }
 
 interface FilterChipProps {
@@ -82,7 +89,12 @@ const ProductTile: React.FC<{
   product: Product;
   fallbackImage: string;
   onSelectProduct: (product: Product) => void;
-}> = ({ product, fallbackImage, onSelectProduct }) => {
+  onAddToCart?: (product: Product) => void;
+  cartQty?: number;
+  cartItemId?: string;
+  onUpdateQuantity?: (id: string, delta: number) => void;
+  onRemoveItem?: (id: string) => void;
+}> = ({ product, fallbackImage, onSelectProduct, onAddToCart, cartQty = 0, cartItemId, onUpdateQuantity, onRemoveItem }) => {
   const imageCandidates = React.useMemo(
     () => Array.from(new Set([product.image, product.secondaryImage, ...(product.listImages || []), fallbackImage].filter(Boolean))),
     [fallbackImage, product.image, product.listImages, product.secondaryImage]
@@ -108,61 +120,106 @@ const ProductTile: React.FC<{
   };
 
   return (
-    <button
-      type="button"
-      onClick={() => onSelectProduct(product)}
-      className="group w-full overflow-hidden rounded-lg border border-[#d8d3ca] bg-white text-left shadow-sm transition-transform duration-200 hover:-translate-y-1"
-    >
-      <span className="relative block aspect-[3/4] overflow-hidden bg-[#e9e4da]">
-        {!imageUnavailable && currentImage ? (
-          <img
-            src={currentImage}
-            alt={product.name}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
-            loading="lazy"
-            referrerPolicy="no-referrer"
-            onError={handleImageError}
-          />
-        ) : (
-          <span className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[#eeeae1] px-6 text-center">
-            <PackageSearch size={26} strokeWidth={1.4} className="text-[#111111]" />
-            <span className="font-mono text-[10px] uppercase tracking-widest text-[#5f5b52]">
-              Image preview coming soon
+    <div className="group w-full overflow-hidden rounded-lg border border-[#d8d3ca] bg-white text-left shadow-sm transition-transform duration-200 hover:-translate-y-1">
+      <button
+        type="button"
+        onClick={() => onSelectProduct(product)}
+        className="w-full text-left"
+      >
+        <span className="relative block aspect-[4/3] overflow-hidden bg-[#e9e4da]">
+          {!imageUnavailable && currentImage ? (
+            <img
+              src={currentImage}
+              alt={product.name}
+              className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.035]"
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              onError={handleImageError}
+            />
+          ) : (
+            <span className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[#eeeae1] px-6 text-center">
+              <PackageSearch size={26} strokeWidth={1.4} className="text-[#111111]" />
+              <span className="font-mono text-[10px] uppercase tracking-widest text-[#5f5b52]">
+                Image preview coming soon
+              </span>
+            </span>
+          )}
+          {discounted && (
+            <span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1 font-mono text-[9px] uppercase tracking-widest text-[#111111] shadow-sm">
+              {discountPercent}% off
+            </span>
+          )}
+        </span>
+        <span className="block p-3 sm:p-4">
+          <span className="flex items-start justify-between gap-3">
+            <span className="min-w-0">
+              <span className="block truncate text-xs font-medium uppercase tracking-wide text-gray-900 sm:text-sm">{product.name}</span>
+              <span className="mt-1 block font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">{product.category}</span>
+            </span>
+            <span className="shrink-0 text-right">
+              <span className="block text-sm font-semibold text-gray-900">{formatINR(product.price)}</span>
+              {discounted && (
+                <span className="mt-1 block font-mono text-[10px] text-[#8b877e] line-through">
+                  {formatINR(product.originalPrice!)}
+                </span>
+              )}
             </span>
           </span>
-        )}
-        {discounted && (
-          <span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1 font-mono text-[9px] uppercase tracking-widest text-[#111111] shadow-sm">
-            {discountPercent}% off
-          </span>
-        )}
-      </span>
-      <span className="block p-3 sm:p-4">
-        <span className="flex items-start justify-between gap-3">
-          <span className="min-w-0">
-            <span className="block truncate text-xs font-medium uppercase tracking-wide text-gray-900 sm:text-sm">{product.name}</span>
-            <span className="mt-1 block font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">{product.category}</span>
-          </span>
-          <span className="shrink-0 text-right">
-            <span className="block text-sm font-semibold text-gray-900">{formatINR(product.price)}</span>
-            {discounted && (
-              <span className="mt-1 block font-mono text-[10px] text-[#8b877e] line-through">
-                {formatINR(product.originalPrice!)}
-              </span>
-            )}
+          <span className="mt-3 block font-mono text-[10px] uppercase tracking-widest text-gray-400">
+            {sizes.slice(0, 5).join(' / ') || 'One size'}
           </span>
         </span>
-        <span className="mt-4 flex items-center justify-between gap-3 border-t border-[#ece9e1] pt-3">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400 sm:text-xs">
-            {sizes.slice(0, 4).join(' / ') || 'One size'}
-          </span>
-          <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest text-[#111111] group-hover:underline sm:text-xs">
-            View
-            <ArrowRight size={12} />
-          </span>
-        </span>
+      </button>
+      <span className="block border-t border-[#ece9e1] px-3 pb-3 pt-2 sm:px-4">
+        {cartQty === 0 ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onAddToCart) {
+                onAddToCart(product);
+              } else {
+                onSelectProduct(product);
+              }
+            }}
+            className="flex h-9 w-full items-center justify-center gap-2 bg-[#111111] text-[11px] font-semibold uppercase tracking-wider text-white transition hover:bg-black"
+          >
+            <ShoppingBag size={14} strokeWidth={1.6} />
+            Add to Bag
+          </button>
+        ) : (
+          <div className="flex h-9 items-center overflow-hidden rounded border border-[#111111]">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (cartQty === 1 && onRemoveItem && cartItemId) {
+                  onRemoveItem(cartItemId);
+                } else if (onUpdateQuantity && cartItemId) {
+                  onUpdateQuantity(cartItemId, -1);
+                }
+              }}
+              className="flex h-full w-10 items-center justify-center text-[#111111] transition hover:bg-[#f0ece4]"
+            >
+              <Minus size={14} />
+            </button>
+            <span className="flex-1 text-center text-[13px] font-semibold text-[#111111]">{cartQty}</span>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onUpdateQuantity && cartItemId) {
+                  onUpdateQuantity(cartItemId, 1);
+                }
+              }}
+              className="flex h-full w-10 items-center justify-center text-[#111111] transition hover:bg-[#f0ece4]"
+            >
+              <Plus size={14} />
+            </button>
+          </div>
+        )}
       </span>
-    </button>
+    </div>
   );
 };
 
@@ -177,11 +234,11 @@ const TrustItem: React.FC<{ icon: React.ElementType; label: string; value: strin
 );
 
 const ServiceCard: React.FC<{ icon: React.ElementType; title: string; body: string }> = ({ icon: Icon, title, body }) => (
-  <div className="flex min-w-[200px] shrink-0 items-start gap-3 rounded-lg border border-gray-100 bg-white px-4 py-3 shadow-sm sm:min-w-[220px] lg:min-w-0 lg:flex-1">
-    <Icon size={16} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[#111111]" />
+  <div className="flex min-w-[180px] shrink-0 items-start gap-2.5 rounded-lg border border-gray-100 bg-white px-3 py-2.5 shadow-sm sm:min-w-[200px] lg:min-w-0 lg:flex-1">
+    <Icon size={15} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[#111111]" />
     <div>
-      <p className="text-xs font-semibold text-[#111111]">{title}</p>
-      <p className="mt-1 text-[11px] leading-4 text-gray-500">{body}</p>
+      <p className="text-[11px] font-semibold text-[#111111]">{title}</p>
+      <p className="mt-0.5 text-[10px] leading-4 text-gray-500">{body}</p>
     </div>
   </div>
 );
@@ -190,9 +247,13 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
   categorySlug,
   categories = [],
   products,
+  cartItems = [],
   onBack,
   onOpenCategory,
-  onSelectProduct
+  onSelectProduct,
+  onAddToCart,
+  onUpdateQuantity,
+  onRemoveItem
 }) => {
   const category = React.useMemo(
     () => categories.find((item) => normalize(item.slug) === normalize(categorySlug) || singular(item.slug) === singular(categorySlug)),
@@ -237,16 +298,8 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
   }, [activeSize, categoryProducts, sortMode]);
 
   const productGridClass = React.useMemo(() => {
-    if (visibleProducts.length === 1) {
-      return 'mx-auto grid max-w-xs grid-cols-1 gap-3 px-4 sm:max-w-sm sm:px-0';
-    }
-
-    if (visibleProducts.length === 2) {
-      return 'grid grid-cols-2 gap-3 px-4 sm:px-0 sm:gap-6';
-    }
-
-    return 'grid grid-cols-2 gap-3 px-4 sm:px-0 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4';
-  }, [visibleProducts.length]);
+    return 'grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3';
+  }, []);
 
   return (
     <motion.div
@@ -254,175 +307,169 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35 }}
-      className="bg-[#f6f5f1] pb-16 text-[#111111] sm:pb-20"
+      className="min-h-[60vh] bg-[#f6f5f1] pb-10 text-[#111111]"
       id="category-gender-view"
     >
-      <section className="mx-auto max-w-screen-xl px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+      {/* Breadcrumb / Back row */}
+      <div className="mx-auto max-w-screen-xl px-4 pt-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between">
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex h-10 items-center gap-2 rounded-full border border-[#d6d2c8] bg-white px-4 font-mono text-[10px] uppercase tracking-widest text-[#5f5b52] shadow-sm transition hover:border-[#111111] hover:text-[#111111]"
+            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-[#d6d2c8] bg-white px-3 font-mono text-[9px] uppercase tracking-widest text-[#5f5b52] transition hover:border-[#111111] hover:text-[#111111]"
           >
-            <ArrowLeft size={14} strokeWidth={1.6} />
-            Back home
+            <ArrowLeft size={12} strokeWidth={1.6} />
+            Back
           </button>
-          <p className="hidden font-mono text-[10px] uppercase tracking-widest text-[#6f6b62] sm:flex">
-            Home / Categories / <span className="text-[#111111]">{title}</span>
+          <p className="hidden font-mono text-[9px] uppercase tracking-widest text-[#6f6b62] sm:block">
+            Home / {title}
           </p>
         </div>
+      </div>
 
-        <div className="grid gap-5 lg:grid-cols-2 lg:items-center">
-          <div className="border-y border-[#d8d3ca] bg-[#fbfaf7] px-1 py-5 sm:px-0 sm:py-6 lg:py-8">
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.78fr)] lg:items-end">
-              <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#6f6b62]">Story category</p>
-                <h1 className="mt-3 text-4xl font-semibold uppercase leading-none text-[#111111] sm:text-5xl lg:text-6xl">
-                  {title}
-                </h1>
-                <p className="mt-4 max-w-2xl text-base leading-7 text-[#5f5b52]">
-                  {category?.description || 'Explore STORY pieces selected for this category.'}
-                </p>
-              </div>
-
-              <div className="divide-y divide-[#dedbd2] border-y border-[#dedbd2] lg:border-y-0">
-                <TrustItem icon={PackageSearch} label="Products" value={compactCountLabel(categoryProducts.length, 'piece', 'pieces')} />
-                <TrustItem icon={Grid2X2} label="Sizes" value={sizeOptions.length ? compactCountLabel(sizeOptions.length, 'option', 'options') : 'One size'} />
-                <TrustItem icon={Truck} label="Delivery" value="Tracked India shipping" />
-              </div>
+      {/* Compact Hero: 2 columns on desktop */}
+      <section className="mx-auto max-w-screen-xl px-4 pt-3 sm:px-6 lg:px-8">
+        <div className="grid gap-3 lg:grid-cols-[1fr_0.8fr]">
+          {/* Left: Category info */}
+          <div className="rounded-lg border border-[#d8d3ca] bg-white p-4 sm:p-5">
+            <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#6f6b62]">Story category</p>
+            <h1 className="mt-1.5 text-2xl font-semibold uppercase leading-tight text-[#111111] sm:text-3xl">
+              {title}
+            </h1>
+            <p className="mt-2 max-w-lg text-sm leading-6 text-[#5f5b52]">
+              {category?.description || 'Explore STORY pieces selected for this category.'}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-4 border-t border-[#ece9e1] pt-3">
+              <span className="font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">
+                <span className="font-semibold text-[#111111]">{categoryProducts.length}</span> {categoryProducts.length === 1 ? 'piece' : 'pieces'}
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">
+                <span className="font-semibold text-[#111111]">{sizeOptions.length || 1}</span> {sizeOptions.length === 1 ? 'size' : 'sizes'}
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">
+                Tracked India delivery
+              </span>
             </div>
           </div>
 
-          <div className="relative order-first h-[min(55vw,220px)] overflow-hidden rounded-xl border border-[#d8d3ca] bg-[#e9e4da] shadow-sm sm:h-64 lg:order-none lg:h-auto lg:max-h-[380px] lg:min-h-[280px]">
+          {/* Right: Category image */}
+          <div className="relative h-[180px] overflow-hidden rounded-lg border border-[#d8d3ca] bg-[#e9e4da] sm:h-[220px] lg:h-full lg:max-h-[280px]">
             <img
               src={heroImage}
               alt={`${title} category`}
               className="h-full w-full object-cover object-center"
-              onError={(event) => {
-                event.currentTarget.style.display = 'none';
-              }}
+              onError={(event) => { event.currentTarget.style.display = 'none'; }}
             />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent p-5">
-              <p className="font-mono text-[9px] uppercase tracking-widest text-white/75">Currently viewing</p>
-              <p className="mt-1 text-base font-semibold uppercase text-white">{title}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Compact Toolbar */}
+      <section className="mx-auto max-w-screen-xl px-4 pt-3 sm:px-6 lg:px-8">
+        <div className="rounded-lg border border-[#d8d3ca] bg-white px-3 py-2.5 sm:px-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">
+                {visibleProducts.length} {visibleProducts.length === 1 ? 'product' : 'products'}
+              </p>
+              <h2 className="text-base font-semibold text-[#111111]">Shop {title}</h2>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {sizeOptions.length > 0 && (
+                <div className="scrollbar-hide flex flex-nowrap gap-1.5 overflow-x-auto">
+                  <FilterChip label="All" selected={!activeSize} onClick={() => setActiveSize('')} />
+                  {sizeOptions.map((size) => (
+                    <FilterChip key={size} label={size} selected={activeSize === size} onClick={() => setActiveSize(size)} />
+                  ))}
+                </div>
+              )}
+              {categoryOptions.length > 1 && (
+                <select
+                  value={selectedCategorySlug}
+                  onChange={(event) => onOpenCategory?.(event.target.value)}
+                  className="h-8 rounded-lg border border-gray-300 bg-white px-2 text-xs text-[#111111] outline-none focus:border-[#111111]"
+                >
+                  {categoryOptions.map((item) => (
+                    <option key={item.id} value={item.slug}>{displayCategoryName(item, item.slug)}</option>
+                  ))}
+                </select>
+              )}
+              <select
+                aria-label="Sort products"
+                value={sortMode}
+                onChange={(event) => setSortMode(event.target.value as 'featured' | 'low' | 'high')}
+                className="h-8 rounded-lg border border-gray-300 bg-white px-2 text-xs text-[#111111] outline-none focus:border-[#111111]"
+              >
+                <option value="featured">Featured</option>
+                <option value="low">Price: Low → High</option>
+                <option value="high">Price: High → Low</option>
+              </select>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-xl border border-[#d8d3ca] bg-white p-4 shadow-sm sm:p-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">
-                  <SlidersHorizontal size={14} strokeWidth={1.6} />
-                  {visibleProducts.length} of {categoryProducts.length} products
-                </p>
-                <h2 className="mt-1 text-xl font-semibold text-[#111111]">Shop {title}</h2>
-              </div>
-
-              <select
-                aria-label="Sort products"
-                value={sortMode}
-                onChange={(event) => setSortMode(event.target.value as 'featured' | 'low' | 'high')}
-                className="h-9 rounded-lg border border-gray-300 bg-white px-3 text-sm text-[#111111] outline-none transition focus:border-[#111111] md:hidden"
-              >
-                <option value="featured">Featured</option>
-                <option value="low">Price low to high</option>
-                <option value="high">Price high to low</option>
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end lg:justify-end">
-              {categoryOptions.length > 1 && (
-                <label className="flex w-full flex-col gap-1 sm:w-auto">
-                  <span className="font-mono text-[9px] uppercase tracking-widest text-[#6f6b62]">Switch category</span>
-                  <select
-                    value={selectedCategorySlug}
-                    onChange={(event) => onOpenCategory?.(event.target.value)}
-                    className="h-9 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-[#111111] outline-none transition focus:border-[#111111] sm:min-w-48"
-                  >
-                    {categoryOptions.map((item) => (
-                      <option key={item.id} value={item.slug}>
-                        {displayCategoryName(item, item.slug)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              )}
-
-              <label className="hidden flex-col gap-1 md:flex">
-                <span className="font-mono text-[9px] uppercase tracking-widest text-[#6f6b62]">Sort</span>
-                <select
-                  value={sortMode}
-                  onChange={(event) => setSortMode(event.target.value as 'featured' | 'low' | 'high')}
-                  className="h-9 min-w-48 rounded-lg border border-gray-300 bg-white px-3 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
-                >
-                  <option value="featured">Featured</option>
-                  <option value="low">Price low to high</option>
-                  <option value="high">Price high to low</option>
-                </select>
-              </label>
-            </div>
-          </div>
-
-          {sizeOptions.length > 0 && (
-            <div className="scrollbar-hide -mx-1 mt-4 flex flex-nowrap gap-2 overflow-x-auto px-1 pb-1 sm:mx-0 sm:px-0">
-              <FilterChip label="All sizes" selected={!activeSize} onClick={() => setActiveSize('')} />
-              {sizeOptions.map((size) => (
-                <FilterChip
-                  key={size}
-                  label={size}
-                  selected={activeSize === size}
-                  onClick={() => setActiveSize(size)}
-                />
-              ))}
-            </div>
-          )}
+      {/* Trust cards — compact */}
+      <section className="mx-auto max-w-screen-xl px-4 pt-3 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <ServiceCard icon={ShieldCheck} title="Verified pieces" body="Authenticated and quality checked." />
+          <ServiceCard icon={Ruler} title="Size support" body="Filter by size, check fit details." />
+          <ServiceCard icon={Truck} title="Fast checkout" body="Tracked shipping across India." />
         </div>
+      </section>
 
-        <div className="scrollbar-hide mt-5 flex flex-nowrap gap-3 overflow-x-auto pb-2 lg:gap-4 lg:overflow-visible lg:pb-0">
-          <ServiceCard
-            icon={ShieldCheck}
-            title="Verified pieces"
-            body="Every item is reviewed for authenticity, finish, and condition before it reaches your wardrobe."
-          />
-          <ServiceCard
-            icon={Ruler}
-            title="Size support"
-            body="Use size filters first, then open a product for available sizes, fit details, and delivery options."
-          />
-          <ServiceCard
-            icon={Truck}
-            title="Fast checkout"
-            body="Cart, address, payment, and confirmation stay in one clear flow so ordering feels predictable."
-          />
-        </div>
-
+      {/* Product Grid */}
+      <section className="mx-auto max-w-screen-xl px-4 pt-4 sm:px-6 lg:px-8">
         {visibleProducts.length > 0 ? (
-          <div className={`mt-5 ${productGridClass}`}>
-            {visibleProducts.map((product) => (
-              <ProductTile
-                key={product.id}
-                product={product}
-                fallbackImage={heroImage}
-                onSelectProduct={onSelectProduct}
-              />
-            ))}
+          <div className={productGridClass}>
+            {visibleProducts.map((product) => {
+              const defaultSize = product.sizes?.[0] || 'O/S';
+              const defaultColor = product.colors?.[0] || { name: 'Default', hex: '#111111' };
+              const itemId = `${product.id}-${defaultSize}-${defaultColor.name.toLowerCase()}`;
+              const qty = cartItems.find(item => item.id === itemId)?.quantity || 0;
+              return (
+                <ProductTile
+                  key={product.id}
+                  product={product}
+                  fallbackImage={heroImage}
+                  onSelectProduct={onSelectProduct}
+                  onAddToCart={onAddToCart}
+                  cartQty={qty}
+                  cartItemId={itemId}
+                  onUpdateQuantity={onUpdateQuantity}
+                  onRemoveItem={onRemoveItem}
+                />
+              );
+            })}
+            {visibleProducts.length < 3 && (
+              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[#DDD8CF] bg-white p-6 text-center">
+                <Sparkles size={20} strokeWidth={1.4} className="text-[#6B625A]" />
+                <p className="mt-2 text-[13px] font-semibold text-[#111111]">More edits coming soon</p>
+                <p className="mt-1 text-[11px] text-[#6B625A]">New drops added every week.</p>
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="mt-3 inline-flex h-8 items-center gap-1.5 border border-[#111111] px-3 text-[10px] font-semibold text-[#111111] transition hover:bg-[#111111] hover:text-white"
+                >
+                  View all collections
+                  <ArrowRight size={11} />
+                </button>
+              </div>
+            )}
           </div>
         ) : (
-          <div className="mt-5 rounded-xl border border-dashed border-[#cfcac0] bg-white px-6 py-16 text-center shadow-sm">
-            <Sparkles className="mx-auto text-[#111111]" size={26} strokeWidth={1.4} />
-            <p className="mt-4 text-lg font-semibold text-[#111111]">No products in this selection</p>
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[#6a665d]">
-              Try another size or switch to a nearby category from the shop toolbar.
+          <div className="rounded-lg border border-dashed border-[#cfcac0] bg-white px-6 py-12 text-center">
+            <Sparkles className="mx-auto text-[#111111]" size={22} strokeWidth={1.4} />
+            <p className="mt-3 text-base font-semibold text-[#111111]">No products in this selection</p>
+            <p className="mx-auto mt-1 max-w-xs text-sm text-[#6a665d]">
+              Try another size or switch category.
             </p>
             {activeSize && (
               <button
                 type="button"
                 onClick={() => setActiveSize('')}
-                className="mt-5 h-10 rounded-full border border-[#111111] px-5 font-mono text-[10px] uppercase tracking-widest transition hover:bg-[#111111] hover:text-white"
+                className="mt-4 h-8 rounded-full border border-[#111111] px-4 font-mono text-[10px] uppercase tracking-widest transition hover:bg-[#111111] hover:text-white"
               >
                 Clear size filter
               </button>

@@ -100,17 +100,18 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         </button>
 
         {/* Main grid: gallery left, info right */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_1fr] lg:gap-12 xl:gap-16">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-10">
 
           {/* Gallery */}
           <div className="space-y-3" id="detail-images-rack">
             {gallery.length > 0 ? (
               <>
-                <div className="aspect-[3/4] overflow-hidden rounded-lg border border-[#DDD8CF] bg-[#EFECE6]">
+                <div className="overflow-hidden rounded-lg border border-[#DDD8CF] bg-[#EFECE6]">
                   <img
                     src={gallery[activeImageIdx]}
                     alt={product.name}
-                    className="h-full w-full object-cover"
+                    className="w-full object-cover object-center"
+                    style={{ maxHeight: '70vh', aspectRatio: '4/5' }}
                     referrerPolicy="no-referrer"
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
@@ -122,7 +123,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                         key={idx}
                         type="button"
                         onClick={() => setActiveImageIdx(idx)}
-                        className={`h-20 w-16 shrink-0 overflow-hidden rounded border transition ${
+                        className={`h-16 w-14 shrink-0 overflow-hidden rounded border transition ${
                           idx === activeImageIdx ? 'border-[#111111]' : 'border-[#DDD8CF] hover:border-[#111111]'
                         }`}
                       >
@@ -133,7 +134,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 )}
               </>
             ) : (
-              <div className="flex aspect-[3/4] items-center justify-center rounded-lg border border-[#DDD8CF] bg-[#EFECE6]">
+              <div className="flex items-center justify-center rounded-lg border border-[#DDD8CF] bg-[#EFECE6]" style={{ aspectRatio: '4/5', maxHeight: '70vh' }}>
                 <PackageSearch size={32} className="text-[#6B625A]" />
               </div>
             )}
