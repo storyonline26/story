@@ -1,65 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&display=swap');
+
 .story-logo {
   display: flex;
-  width: clamp(8rem, 30vw, 9.25rem);
-  flex: 0 0 auto;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  line-height: 0;
+  line-height: 1;
   pointer-events: none;
+  color: #ffffff;
 }
 
-.story-logo__image {
-  display: block;
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  user-select: none;
+.story-logo__title {
+  font-family: 'Playfair Display', 'Didot', 'Times New Roman', serif;
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  color: #ffffff;
 }
 
 .story-logo__tagline {
-  position: relative;
   display: flex;
-  width: 88%;
   align-items: center;
-  justify-content: center;
-  gap: 0.22rem;
-  margin-top: -0.05rem;
+  gap: 5px;
+  margin-top: 3px;
   color: #ffffff;
-  font-family: "Inter", "Montserrat", Arial, sans-serif;
-  font-size: 0.285rem;
-  font-weight: 600;
-  letter-spacing: 0.24em;
-  line-height: 1;
-  opacity: 0.78;
-  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 6px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  opacity: 0.7;
   white-space: nowrap;
 }
 
 .story-logo__tagline::before,
 .story-logo__tagline::after {
   display: block;
-  height: 1px;
-  min-width: 0.62rem;
-  flex: 1 1 auto;
+  height: 0.5px;
+  width: 18px;
   background: currentColor;
   content: "";
-  opacity: 0.52;
+  opacity: 0.6;
 }
 
-@media (min-width: 900px) {
-  .story-logo {
-    width: clamp(8.75rem, 9.75vw, 9.75rem);
+@media (min-width: 640px) {
+  .story-logo__title {
+    font-size: 28px;
   }
-
   .story-logo__tagline {
-    font-size: 0.31rem;
-    letter-spacing: 0.28em;
+    font-size: 5.5px;
+    margin-top: 3px;
+    gap: 6px;
+  }
+  .story-logo__tagline::before,
+  .story-logo__tagline::after {
+    width: 22px;
   }
 }
 
-@media (min-width: 1536px) {
-  .story-logo {
-    width: clamp(9.25rem, 8.75vw, 10.25rem);
+@media (min-width: 1024px) {
+  .story-logo__title {
+    font-size: 30px;
+  }
+  .story-logo__tagline {
+    font-size: 6px;
+    margin-top: 4px;
+  }
+  .story-logo__tagline::before,
+  .story-logo__tagline::after {
+    width: 26px;
   }
 }

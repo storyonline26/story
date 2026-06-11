@@ -1,12 +1,14 @@
 import React from 'react';
-import { Menu, Search, ShoppingBag, User, X } from 'lucide-react';
+import { LogIn, Menu, Search, ShoppingBag, User, X } from 'lucide-react';
 import { ActiveScreen } from '../types';
+import StoryLogo from './StoryLogo';
 
 interface NavbarProps {
   activeScreen: ActiveScreen;
   setActiveScreen: (screen: ActiveScreen) => void;
   cartCount: number;
   onCartToggle: () => void;
+  isLoggedIn?: boolean;
 }
 
 const LEFT_LINKS: Array<{ label: string; screen: ActiveScreen; sectionId?: string }> = [
@@ -24,7 +26,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeScreen,
   setActiveScreen,
   cartCount,
-  onCartToggle
+  onCartToggle,
+  isLoggedIn = false
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
@@ -70,9 +73,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => navigate('shop')}
             className="flex flex-col items-center transition duration-200 hover:opacity-80"
             aria-label="STORY home"
+            id="nav-logo-btn"
           >
-            <span className="font-display text-[26px] font-black tracking-[0.04em] text-white">STORY</span>
-            <span className="mt-[-2px] text-[9px] font-medium uppercase tracking-[0.25em] text-white/45">India</span>
+            <StoryLogo />
           </button>
 
           {/* Right links + icons */}
@@ -131,8 +134,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => navigate('shop')}
             className="flex items-center"
             aria-label="STORY home"
+            id="nav-logo-btn-mobile"
           >
-            <span className="font-display text-xl font-black tracking-[0.04em] text-white">STORY</span>
+            <StoryLogo />
           </button>
 
           <div className="flex items-center gap-1">
@@ -144,6 +148,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Search size={20} strokeWidth={1.5} />
             </button>
+            {!isLoggedIn && (
+              <button
+                type="button"
+                onClick={() => navigate('settings')}
+                className="flex h-11 w-11 items-center justify-center text-white/70 transition hover:text-white"
+                aria-label="Login"
+              >
+                <LogIn size={20} strokeWidth={1.5} />
+              </button>
+            )}
             <button
               type="button"
               onClick={onCartToggle}
@@ -186,7 +200,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => navigate('settings')}
               className="flex h-12 w-full items-center text-left text-[15px] font-medium text-white/60"
             >
-              Account
+              {isLoggedIn ? 'Account' : 'Login'}
             </button>
           </div>
         </div>

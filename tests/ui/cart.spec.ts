@@ -7,6 +7,10 @@ import { readTestState } from '../helpers/state';
 async function addFirstVisibleProduct(page: import('@playwright/test').Page) {
   await page.goto('/collections');
   await page.locator('[id^="discover-card-"]').first().click();
+  await expect(page.locator('#product-detail-view-container')).toBeVisible();
+  // Select first size if available
+  const sizeBtn = page.locator('#detail-sizes-selector button, [id*="size"] button').first();
+  if (await sizeBtn.isVisible().catch(() => false)) await sizeBtn.click();
   await new ProductPage(page).addToCart();
 }
 

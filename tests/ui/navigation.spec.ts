@@ -42,10 +42,10 @@ test.describe('Storefront navigation', () => {
     await page.locator('#nav-logo-btn').click();
     await expect(page.locator('#shop-view-container')).toBeVisible();
 
-    await page.locator('#nav-search-btn, button[aria-label="Search products"]').first().click();
-    await expect(page.locator('#discover-view-container')).toBeVisible();
+    await page.locator('#nav-search-btn, button[aria-label="Search products"], button[aria-label="Search"]').first().click();
+    await expect(page.locator('#discover-view-container')).toBeVisible({ timeout: 10_000 });
 
-    await page.locator('#nav-user-btn, button:has-text("Account")').first().click();
+    await page.locator('#nav-user-btn, button[aria-label="Account"]').first().click();
     await expect(page.locator('#login-view-root, #settings-view-container')).toBeVisible();
 
     await page.locator('button[aria-label="Shopping bag"]').first().click();

@@ -25,7 +25,7 @@ test.describe('Storefront homepage', () => {
     await expect(page.locator('#our-products-section')).toBeVisible();
 
     await page.goto('/');
-    await page.locator('#editorial-hero').getByRole('button', { name: /style|lookbook|view/i }).first().click();
+    await page.locator('#editorial-hero').getByRole('button', { name: /explore|collection|lookbook|view/i }).first().click();
     await expect(page.locator('#discover-view-container')).toBeVisible();
     await expect(page).toHaveURL(/\/collections/);
   });

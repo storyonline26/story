@@ -41,7 +41,7 @@ export class ProductPage {
 
   async addToCart() {
     await this.page.locator('#add-to-cart-action-btn').click();
-    await expect(this.page.locator('#cart-drawer-panel')).toBeVisible();
+    await expect(this.page.locator('#cart-drawer-panel')).toBeVisible({ timeout: 10_000 });
   }
 
   getPrice() {

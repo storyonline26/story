@@ -332,7 +332,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
       id="login-view-root"
     >
       <div className="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="relative min-h-[360px] overflow-hidden border-b border-[#deded9] bg-[#e9e9e6] lg:min-h-[calc(100vh-5rem)] lg:border-b-0 lg:border-r">
+        <div className="relative hidden overflow-hidden border-b border-[#deded9] bg-[#e9e9e6] lg:block lg:min-h-[calc(100vh-5rem)] lg:border-b-0 lg:border-r">
           <img
             alt="STORY India client access editorial"
             className="absolute inset-0 h-full w-full object-cover object-center grayscale"
@@ -348,7 +348,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center justify-center px-5 py-10 sm:px-8 lg:px-16">
+        <div className="flex items-center justify-center px-5 py-8 sm:px-8 sm:py-10 lg:px-16 lg:py-0">
           <div className="w-full max-w-xl">
             {onBack && (
               <button
@@ -361,19 +361,19 @@ export const LoginView: React.FC<LoginViewProps> = ({
               </button>
             )}
 
-            <div className="mb-8">
+            <div className="mb-6">
               <p className="font-mono text-[10px] uppercase text-[#6f6f6f]">
                 {isCheckout ? 'Checkout access' : 'Account access'}
               </p>
-              <h1 className="mt-2 font-display text-5xl font-black uppercase leading-none text-[#050505] sm:text-6xl">
-                {mode === 'phone' ? 'Add Phone' : mode === 'forgot' ? 'Recover Access' : isCheckout ? 'Continue Securely' : 'Your STORY'}
+              <h1 className="mt-2 font-display text-3xl font-black uppercase leading-none text-[#050505] sm:text-4xl lg:text-5xl">
+                {mode === 'phone' ? 'Add Phone' : mode === 'forgot' ? 'Recover Access' : isCheckout ? 'Continue Securely' : 'Sign In'}
               </h1>
-              <p className="mt-4 max-w-md text-sm leading-6 text-[#555555]">
+              <p className="mt-3 max-w-md text-sm leading-6 text-[#555555]">
                 {mode === 'phone'
-                  ? 'Add a phone number so delivery updates, payment support, and order calls can reach you.'
+                  ? 'Add a phone number so delivery updates and order calls can reach you.'
                   : isCheckout
-                  ? 'Sign in to use saved India delivery details and complete secure Razorpay checkout.'
-                  : 'Manage your profile, addresses, and STORY India order history.'}
+                  ? 'Sign in to complete secure Razorpay checkout.'
+                  : 'Access your profile, addresses, and order history.'}
               </p>
             </div>
 

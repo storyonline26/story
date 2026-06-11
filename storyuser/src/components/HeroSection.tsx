@@ -45,7 +45,7 @@ export function HeroSection({ content, onShopEdit, onViewLookbook }: HeroSection
               onClick={onViewLookbook}
               className="group inline-flex h-[52px] items-center gap-3 border border-[#111111] px-7 text-[13px] font-semibold tracking-wide text-[#111111] transition hover:bg-[#111111] hover:text-white"
             >
-              {content.heroSecondaryCta || 'View Lookbook'}
+              {content.heroSecondaryCta || 'Explore Collections'}
               <ArrowRight size={15} strokeWidth={2} className="transition-transform duration-300 group-hover:translate-x-1" />
             </button>
           </div>

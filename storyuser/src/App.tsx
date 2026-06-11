@@ -80,7 +80,7 @@ const DEFAULT_STOREFRONT_CONTENT: StorefrontContent = {
   heroTitle: 'OUR LATEST STORY',
   heroBody: 'Discover verified branded fashion, curated in India for everyday premium style.',
   heroPrimaryCta: 'Shop New Arrivals',
-  heroSecondaryCta: 'View Lookbook',
+  heroSecondaryCta: 'Explore Collections',
   heroImagePrimary: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1100&q=85',
   heroImageSecondary: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=85',
   heroImageDetail: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=700&q=85',
@@ -602,6 +602,7 @@ export default function App() {
         }}
         cartCount={cartBadgeCount}
         onCartToggle={() => setCartOpen(prev => !prev)}
+        isLoggedIn={isLoggedIn}
       />
       <AnnouncementTicker items={storefrontContent.announcementItems} />
 
