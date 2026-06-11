@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { ArrowRight, CheckCircle2, Truck, RotateCcw, Headphones, Star } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Category, Product, StorefrontContent } from '../types';
@@ -107,20 +107,6 @@ export const ShopView: React.FC<ShopViewProps> = ({ onSelectProduct, setActiveSc
         </div>
       </section>
 
-      {/* 4. Featured Products */}
-      {featuredProducts.length > 0 && (
-        <section className="bg-white py-12 sm:py-14 lg:py-16">
-          <div className="mx-auto max-w-[1280px] px-5 sm:px-6 lg:px-8">
-            <SectionHeader eyebrow="New Arrivals" title="Featured Pieces" description="Hand-picked from our latest collection." />
-
-            <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-              {featuredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} onSelect={onSelectProduct} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* 5. Trust Section */}
       <section className="bg-[#F8F6F1] py-10 sm:py-12 lg:py-14">
@@ -210,7 +196,7 @@ function ProductCard({ product, onSelect }: { product: Product; onSelect: (p: Pr
           )}
         </div>
         {product.sizes && product.sizes.length > 0 && (
-          <p className="mt-2 text-[11px] text-[#6B625A]">{product.sizes.join(' · ')}</p>
+          <p className="mt-2 text-[11px] text-[#6B625A]">{product.sizes.join(' Â· ')}</p>
         )}
       </div>
     </button>
