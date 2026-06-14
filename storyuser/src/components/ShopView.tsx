@@ -62,7 +62,7 @@ export const ShopView: React.FC<ShopViewProps> = ({ onSelectProduct, setActiveSc
           description={content.productsBody || 'Explore curated essentials across clothing, footwear, and everyday luxury.'}
         />
 
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           {categoryTiles.map((category) => (
             <button
               key={category.id}
@@ -70,7 +70,7 @@ export const ShopView: React.FC<ShopViewProps> = ({ onSelectProduct, setActiveSc
               onClick={() => onOpenCategory(category.slug)}
               className="group relative overflow-hidden rounded-lg bg-white border border-[#DDD8CF] text-left transition duration-300 hover:border-[#111111] hover:shadow-lg"
             >
-              <div className="aspect-[4/3] overflow-hidden bg-[#EFECE6]">
+              <div className="aspect-square overflow-hidden bg-[#EFECE6] sm:aspect-[4/3]">
                 {category.image ? (
                   <img
                     src={category.image}
@@ -86,18 +86,18 @@ export const ShopView: React.FC<ShopViewProps> = ({ onSelectProduct, setActiveSc
                   </div>
                 )}
               </div>
-              <div className="p-5">
-                <div className="flex items-start justify-between gap-3">
+              <div className="p-3 sm:p-5">
+                <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h3 className="text-[15px] font-semibold text-[#111111]">{category.name}</h3>
-                    <p className="mt-1 text-[12px] text-[#6B625A]">
+                    <h3 className="text-[13px] font-semibold text-[#111111] sm:text-[15px]">{category.name}</h3>
+                    <p className="mt-0.5 text-[10px] text-[#6B625A] sm:mt-1 sm:text-[12px]">
                       {category.count > 0 ? `${category.count} pieces` : 'Coming soon'}
                     </p>
                   </div>
-                  <ArrowRight size={16} className="mt-1 shrink-0 text-[#6B625A] transition group-hover:translate-x-1 group-hover:text-[#111111]" />
+                  <ArrowRight size={14} className="mt-0.5 shrink-0 text-[#6B625A] transition group-hover:translate-x-1 group-hover:text-[#111111] sm:mt-1" />
                 </div>
                 {category.description && (
-                  <p className="mt-3 line-clamp-2 text-[13px] leading-relaxed text-[#6B625A]">
+                  <p className="mt-2 line-clamp-2 hidden text-[13px] leading-relaxed text-[#6B625A] sm:block">
                     {category.description}
                   </p>
                 )}
@@ -108,14 +108,38 @@ export const ShopView: React.FC<ShopViewProps> = ({ onSelectProduct, setActiveSc
       </section>
 
 
-      {/* 5. Trust Section */}
-      <section className="bg-[#F8F6F1] py-10 sm:py-12 lg:py-14">
+      {/* 5. Trust Strip */}
+      <section className="bg-[#F5F5F3] py-6">
         <div className="mx-auto max-w-[1280px] px-5 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
-            <TrustCard icon={CheckCircle2} title="Verified Authentic" description="Every piece is brand-verified before listing." />
-            <TrustCard icon={Truck} title="India-wide Delivery" description="Fast shipping across all major cities and towns." />
-            <TrustCard icon={RotateCcw} title="Easy Returns" description="Hassle-free returns within the eligible window." />
-            <TrustCard icon={Headphones} title="Size Support" description="Get help finding the perfect fit before you buy." />
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <div className="rounded-lg border border-[#DDD8CF] bg-white p-4 text-center">
+              <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-[#EFECE6]">
+                <CheckCircle2 size={16} strokeWidth={1.5} className="text-[#111111]" />
+              </div>
+              <p className="mt-2 text-[12px] font-semibold text-[#111111]">Verified</p>
+              <p className="mt-1 text-[11px] text-[#6B625A]">Brand authenticated</p>
+            </div>
+            <div className="rounded-lg border border-[#DDD8CF] bg-white p-4 text-center">
+              <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-[#EFECE6]">
+                <Truck size={16} strokeWidth={1.5} className="text-[#111111]" />
+              </div>
+              <p className="mt-2 text-[12px] font-semibold text-[#111111]">Fast Delivery</p>
+              <p className="mt-1 text-[11px] text-[#6B625A]">All India shipping</p>
+            </div>
+            <div className="rounded-lg border border-[#DDD8CF] bg-white p-4 text-center">
+              <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-[#EFECE6]">
+                <RotateCcw size={16} strokeWidth={1.5} className="text-[#111111]" />
+              </div>
+              <p className="mt-2 text-[12px] font-semibold text-[#111111]">Easy Returns</p>
+              <p className="mt-1 text-[11px] text-[#6B625A]">Hassle-free policy</p>
+            </div>
+            <div className="rounded-lg border border-[#DDD8CF] bg-white p-4 text-center">
+              <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-[#EFECE6]">
+                <Star size={16} strokeWidth={1.5} className="text-[#111111]" />
+              </div>
+              <p className="mt-2 text-[12px] font-semibold text-[#111111]">Best Price</p>
+              <p className="mt-1 text-[11px] text-[#6B625A]">Premium at fair value</p>
+            </div>
           </div>
         </div>
       </section>

@@ -265,6 +265,7 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
     [category, categorySlug, source]
   );
   const [activeSize, setActiveSize] = React.useState('');
+  const [activeGender, setActiveGender] = React.useState<'all' | 'men' | 'women'>('all');
   const [sortMode, setSortMode] = React.useState<'featured' | 'low' | 'high'>('featured');
   const heroImage = category?.image || fallbackHeroImage;
   const title = displayCategoryName(category, categorySlug);
@@ -279,6 +280,7 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
 
   React.useEffect(() => {
     setActiveSize('');
+    setActiveGender('all');
     setSortMode('featured');
   }, [categorySlug]);
 
@@ -288,14 +290,22 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
   );
 
   const visibleProducts = React.useMemo(() => {
-    const filtered = activeSize
+    let filtered = activeSize
       ? categoryProducts.filter((product) => product.sizes?.includes(activeSize))
       : categoryProducts;
+
+    if (activeGender !== 'all') {
+      filtered = filtered.filter((product) => {
+        const gender = (product.gender || 'unisex').toLowerCase();
+        if (gender === 'unisex') return true;
+        return gender === activeGender;
+      });
+    }
 
     if (sortMode === 'low') return [...filtered].sort((a, b) => a.price - b.price);
     if (sortMode === 'high') return [...filtered].sort((a, b) => b.price - a.price);
     return filtered;
-  }, [activeSize, categoryProducts, sortMode]);
+  }, [activeSize, activeGender, categoryProducts, sortMode]);
 
   const productGridClass = React.useMemo(() => {
     return 'grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3';
@@ -375,7 +385,31 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
               <h2 className="text-base font-semibold text-[#111111]">Shop {title}</h2>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Gender filter */}
+              <div className="flex rounded-full border border-[#d8d3ca] overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setActiveGender('all')}
+                  className={`px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition ${activeGender === 'all' ? 'bg-[#111111] text-white' : 'bg-white text-[#6f6b62] hover:text-[#111111]'}`}
+                >
+                  All
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveGender('men')}
+                  className={`px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider border-l border-[#d8d3ca] transition ${activeGender === 'men' ? 'bg-[#111111] text-white' : 'bg-white text-[#6f6b62] hover:text-[#111111]'}`}
+                >
+                  Men
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveGender('women')}
+                  className={`px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider border-l border-[#d8d3ca] transition ${activeGender === 'women' ? 'bg-[#111111] text-white' : 'bg-white text-[#6f6b62] hover:text-[#111111]'}`}
+                >
+                  Women
+                </button>
+              </div>
               {sizeOptions.length > 0 && (
                 <div className="scrollbar-hide flex flex-nowrap gap-1.5 overflow-x-auto">
                   <FilterChip label="All" selected={!activeSize} onClick={() => setActiveSize('')} />

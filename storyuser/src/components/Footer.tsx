@@ -98,6 +98,24 @@ export const Footer: React.FC<FooterProps> = ({ setActiveScreen, onOpenPolicy })
             <p className="mt-5 max-w-[240px] text-[14px] leading-relaxed text-[#6B625A]">
               Verified branded fashion, curated in India for everyday premium style.
             </p>
+
+            {/* STORY Verified Seal */}
+            <div className="relative mt-6 flex h-28 w-28 items-center justify-center">
+              <div className="absolute inset-0 rounded-full border-2 border-[#111111]" />
+              <div className="absolute inset-1.5 rounded-full border border-[#111111]/50" />
+              <svg className="absolute inset-0 h-full w-full animate-[spin_20s_linear_infinite]" viewBox="0 0 200 200">
+                <defs>
+                  <path id="footerSealCircle" d="M100,100 m-68,0 a68,68 0 1,1 136,0 a68,68 0 1,1 -136,0" fill="none" />
+                </defs>
+                <text className="fill-[#111111]" style={{ fontSize: '10px', fontFamily: 'Inter, sans-serif', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+                  <textPath href="#footerSealCircle" startOffset="0%">Verified authentic • 100% original • Best price &amp; quality • </textPath>
+                </text>
+              </svg>
+              <div className="flex flex-col items-center">
+                <span className="font-display text-sm font-black tracking-[0.06em] text-[#111111]">STORY</span>
+                <span className="text-[6px] font-medium uppercase tracking-[0.15em] text-[#6B625A]">Verified</span>
+              </div>
+            </div>
             <div className="mt-6 flex items-center gap-3">
               <a href="#" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#DDD8CF] text-[#6B625A] transition hover:border-[#111111] hover:bg-[#111111] hover:text-white" aria-label="Instagram">
                 <Instagram size={16} strokeWidth={1.6} />
@@ -161,6 +179,24 @@ export const Footer: React.FC<FooterProps> = ({ setActiveScreen, onOpenPolicy })
               <a href="#" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#DDD8CF] text-[#6B625A]" aria-label="Instagram"><Instagram size={16} /></a>
               <button type="button" onClick={() => setActiveScreen('contact')} className="flex h-10 w-10 items-center justify-center rounded-full border border-[#DDD8CF] text-[#6B625A]" aria-label="WhatsApp"><MessageCircle size={16} /></button>
               <button type="button" onClick={() => setActiveScreen('contact')} className="flex h-10 w-10 items-center justify-center rounded-full border border-[#DDD8CF] text-[#6B625A]" aria-label="Email"><Mail size={16} /></button>
+            </div>
+
+            {/* STORY Verified Seal - Mobile */}
+            <div className="relative mt-6 flex h-24 w-24 items-center justify-center">
+              <div className="absolute inset-0 rounded-full border-2 border-[#111111]" />
+              <div className="absolute inset-1.5 rounded-full border border-[#111111]/50" />
+              <svg className="absolute inset-0 h-full w-full animate-[spin_20s_linear_infinite]" viewBox="0 0 200 200">
+                <defs>
+                  <path id="mobileSealCircle" d="M100,100 m-68,0 a68,68 0 1,1 136,0 a68,68 0 1,1 -136,0" fill="none" />
+                </defs>
+                <text className="fill-[#111111]" style={{ fontSize: '10px', fontFamily: 'Inter, sans-serif', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+                  <textPath href="#mobileSealCircle" startOffset="0%">Verified authentic • 100% original • Best price &amp; quality • </textPath>
+                </text>
+              </svg>
+              <div className="flex flex-col items-center">
+                <span className="font-display text-xs font-black tracking-[0.06em] text-[#111111]">STORY</span>
+                <span className="text-[5px] font-medium uppercase tracking-[0.12em] text-[#6B625A]">Verified</span>
+              </div>
             </div>
           </div>
 

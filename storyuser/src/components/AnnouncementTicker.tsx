@@ -22,8 +22,8 @@ export const AnnouncementTicker: React.FC<AnnouncementTickerProps> = ({ items = 
   const repeated = `${text}${separator}${text}${separator}`;
 
   return (
-    <div className="w-full overflow-hidden border-b border-white/10 bg-[#0a0a0a] py-2">
-      <div className="animate-marquee whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.2em] text-white/70">
+    <div className="w-full overflow-hidden border-b border-[#e5e5e5] bg-[#F5F5F5] py-2">
+      <div className="animate-marquee whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.2em] text-[#333333]">
         {repeated}
       </div>
     </div>

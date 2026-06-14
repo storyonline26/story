@@ -21,6 +21,7 @@ export interface Product {
   sizes?: string[]; // e.g. ["S", "M", "L", "XL"]
   colors?: ColorOption[];
   stock?: number;
+  gender?: string;
   status?: string;
 }
 

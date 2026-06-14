@@ -129,17 +129,31 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Mobile layout */}
         <div className="flex h-[60px] items-center justify-between lg:hidden">
+          {/* Left spacer for centering */}
+          <div className="flex items-center gap-1 w-[100px]">
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((open) => !open)}
+              className="flex h-11 w-11 items-center justify-center text-white"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            >
+              {mobileMenuOpen ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
+            </button>
+          </div>
+
+          {/* Center logo */}
           <button
             type="button"
             onClick={() => navigate('shop')}
-            className="flex items-center"
+            className="absolute left-1/2 -translate-x-1/2 flex items-center"
             aria-label="STORY home"
             id="nav-logo-btn-mobile"
           >
             <StoryLogo />
           </button>
 
-          <div className="flex items-center gap-1">
+          {/* Right icons */}
+          <div className="flex items-center gap-1 w-[100px] justify-end">
             <button
               type="button"
               onClick={() => navigate('discover')}
@@ -169,22 +183,37 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {cartCount}
               </span>
             </button>
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen((open) => !open)}
-              className="flex h-11 w-11 items-center justify-center text-white"
-              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-            >
-              {mobileMenuOpen ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
-            </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <div className="border-t border-white/10 bg-[#111111] lg:hidden" id="mobile-menu-drawer">
-          <div className="mx-auto max-w-[1280px] px-5 py-4 sm:px-6">
+      {/* Mobile menu - slide from left */}
+      <div
+        className={`fixed inset-0 z-40 lg:hidden transition-all duration-300 ${
+          mobileMenuOpen ? 'visible' : 'invisible'
+        }`}
+      >
+        {/* Backdrop */}
+        <div
+          className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0'}`}
+          onClick={() => setMobileMenuOpen(false)}
+        />
+        {/* Drawer */}
+        <div
+          className={`absolute left-0 top-0 h-full w-[280px] bg-[#111111] shadow-2xl transition-transform duration-300 ease-out ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+          id="mobile-menu-drawer"
+        >
+          <div className="flex h-[60px] items-center justify-between border-b border-white/10 px-5">
+            <span className="font-display text-lg font-black text-white">STORY</span>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex h-9 w-9 items-center justify-center text-white/70"
+            >
+              <X size={20} strokeWidth={1.5} />
+            </button>
+          </div>
+          <div className="px-5 py-4">
             {[...LEFT_LINKS, ...RIGHT_LINKS].map((item) => (
               <button
                 key={item.label}
@@ -204,7 +233,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
         </div>
-      )}
+      </div>
     </nav>
   );
 };
