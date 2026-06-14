@@ -1,5 +1,5 @@
 import React from 'react';
-import { Instagram, Mail, MessageCircle } from 'lucide-react';
+import { Facebook, Instagram, Mail, MessageCircle } from 'lucide-react';
 import { ActiveScreen } from '../types';
 import { PolicyKey } from './PolicyView';
 
@@ -123,6 +123,9 @@ export const Footer: React.FC<FooterProps> = ({ setActiveScreen, onOpenPolicy })
               <button type="button" onClick={() => setActiveScreen('contact')} className="flex h-10 w-10 items-center justify-center rounded-full border border-[#DDD8CF] text-[#6B625A] transition hover:border-[#111111] hover:bg-[#111111] hover:text-white" aria-label="WhatsApp">
                 <MessageCircle size={16} strokeWidth={1.6} />
               </button>
+              <a href="#" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#DDD8CF] text-[#6B625A] transition hover:border-[#111111] hover:bg-[#111111] hover:text-white" aria-label="Facebook">
+                <Facebook size={16} strokeWidth={1.6} />
+              </a>
               <button type="button" onClick={() => setActiveScreen('contact')} className="flex h-10 w-10 items-center justify-center rounded-full border border-[#DDD8CF] text-[#6B625A] transition hover:border-[#111111] hover:bg-[#111111] hover:text-white" aria-label="Email">
                 <Mail size={16} strokeWidth={1.6} />
               </button>
@@ -178,6 +181,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveScreen, onOpenPolicy })
             <div className="mt-5 flex items-center gap-3">
               <a href="#" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#DDD8CF] text-[#6B625A]" aria-label="Instagram"><Instagram size={16} /></a>
               <button type="button" onClick={() => setActiveScreen('contact')} className="flex h-10 w-10 items-center justify-center rounded-full border border-[#DDD8CF] text-[#6B625A]" aria-label="WhatsApp"><MessageCircle size={16} /></button>
+              <a href="#" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#DDD8CF] text-[#6B625A]" aria-label="Facebook"><Facebook size={16} /></a>
               <button type="button" onClick={() => setActiveScreen('contact')} className="flex h-10 w-10 items-center justify-center rounded-full border border-[#DDD8CF] text-[#6B625A]" aria-label="Email"><Mail size={16} /></button>
             </div>
 

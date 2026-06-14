@@ -17,9 +17,10 @@ const FALLBACK_SLIDES = [
 export function HeroImageSlider({ images = [] }: HeroImageSliderProps) {
   const slides = React.useMemo(() => {
     const configured = images.map((s) => s?.trim()).filter(Boolean);
-    if (configured.length > 0) {
+    if (configured.length >= 6) {
       return configured.map((src, i) => ({ src, alt: `STORY editorial hero image ${i + 1}` }));
     }
+    // Use fallback slides if fewer than 6 configured
     return FALLBACK_SLIDES;
   }, [images]);
 

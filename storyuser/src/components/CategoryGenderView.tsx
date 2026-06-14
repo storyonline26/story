@@ -265,7 +265,9 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
     [category, categorySlug, source]
   );
   const [activeSize, setActiveSize] = React.useState('');
-  const [activeGender, setActiveGender] = React.useState<'all' | 'men' | 'women'>('all');
+  const [activeGender, setActiveGender] = React.useState<'all' | 'men' | 'women'>(
+    categorySlug === 'dresses' ? 'women' : 'all'
+  );
   const [sortMode, setSortMode] = React.useState<'featured' | 'low' | 'high'>('featured');
   const heroImage = category?.image || fallbackHeroImage;
   const title = displayCategoryName(category, categorySlug);
@@ -280,7 +282,7 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
 
   React.useEffect(() => {
     setActiveSize('');
-    setActiveGender('all');
+    setActiveGender(categorySlug === 'dresses' ? 'women' : 'all');
     setSortMode('featured');
   }, [categorySlug]);
 
@@ -308,7 +310,7 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
   }, [activeSize, activeGender, categoryProducts, sortMode]);
 
   const productGridClass = React.useMemo(() => {
-    return 'grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3';
+    return 'grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3';
   }, []);
 
   return (
@@ -510,6 +512,27 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
             )}
           </div>
         )}
+
+        {/* STORY Verified Seal */}
+        <div className="mt-12 flex flex-col items-center text-center">
+          <div className="relative flex h-36 w-36 items-center justify-center sm:h-44 sm:w-44">
+            <div className="absolute inset-0 rounded-full border-[3px] border-[#111111]" />
+            <div className="absolute inset-2 rounded-full border border-[#111111]/50" />
+            <svg className="absolute inset-0 h-full w-full animate-[spin_20s_linear_infinite]" viewBox="0 0 200 200">
+              <defs>
+                <path id="categorySealCircle" d="M100,100 m-68,0 a68,68 0 1,1 136,0 a68,68 0 1,1 -136,0" fill="none" />
+              </defs>
+              <text className="fill-[#111111]" style={{ fontSize: '10px', fontFamily: 'Inter, sans-serif', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+                <textPath href="#categorySealCircle" startOffset="0%">Verified authentic • 100% original • Best price &amp; quality • </textPath>
+              </text>
+            </svg>
+            <div className="flex flex-col items-center">
+              <span className="font-display text-xl font-black tracking-[0.08em] text-[#111111] sm:text-2xl">STORY</span>
+              <span className="mt-0.5 text-[7px] font-medium uppercase tracking-[0.18em] text-[#6B625A] sm:text-[8px]">Verified Garment</span>
+            </div>
+          </div>
+          <p className="mt-4 max-w-xs text-[12px] text-[#6B625A]">Every piece is authenticated and quality checked before it reaches you.</p>
+        </div>
       </section>
     </motion.div>
   );
