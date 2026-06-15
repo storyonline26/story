@@ -62,7 +62,7 @@ export const ShopView: React.FC<ShopViewProps> = ({ onSelectProduct, setActiveSc
           description={content.productsBody || 'Explore curated essentials across clothing, footwear, and everyday luxury.'}
         />
 
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
           {categoryTiles.map((category) => (
             <button
               key={category.id}
