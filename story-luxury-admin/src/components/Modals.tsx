@@ -70,6 +70,7 @@ type ProductDraft = {
   price: string;
   originalPrice: string;
   stock: string;
+  sizeStock: Record<string, string>;
   description: string;
   composition: string;
   care: string;
@@ -83,7 +84,7 @@ type ProductDraft = {
   status: Product['status'];
 };
 
-const sizeOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '28', '30', '32', '34', '36', '38', '40'];
+const defaultSizeOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '26', '28', '30', '32', '34', '36', '38', '40', '42', '44', '6', '7', '8', '9', '10', '11', '12', '13'];
 
 const makeSku = (name: string) => {
   const prefix = (name || 'STORY').replace(/[^a-z0-9]/gi, '').slice(0, 3).toUpperCase() || 'STY';
@@ -122,6 +123,7 @@ function ProductEditorModal({
       price: product?.price ? String(product.price) : '',
       originalPrice: product?.originalPrice ? String(product.originalPrice) : '',
       stock: product?.stock !== undefined ? String(product.stock) : '',
+      sizeStock: product?.sizeStock ? Object.fromEntries(Object.entries(product.sizeStock).map(([k, v]) => [k, String(v)])) : {},
       description: product?.description || '',
       composition: product?.composition || '',
       care: product?.care || '',
@@ -142,6 +144,12 @@ function ProductEditorModal({
   }, [defaultDraft, isOpen]);
 
   const selectedCategory = activeCategories.find((item) => item.id === draft.categoryId) || activeCategories[0];
+
+  const sizeOptions = React.useMemo(() => {
+    const catSizes = selectedCategory?.sizes;
+    if (Array.isArray(catSizes) && catSizes.length > 0) return catSizes as string[];
+    return defaultSizeOptions;
+  }, [selectedCategory?.sizes]);
 
   const updateDetail = (index: number, value: string) => {
     setDraft((current) => ({
@@ -215,6 +223,7 @@ function ProductEditorModal({
       price: Number(draft.price),
       originalPrice: draft.originalPrice ? Number(draft.originalPrice) : undefined,
       stock: Number(draft.stock),
+      sizeStock: Object.keys(draft.sizeStock).length > 0 ? Object.fromEntries(Object.entries(draft.sizeStock).map(([k, v]) => [k, Number(v) || 0])) : undefined,
       image: images[0] || '',
       images,
       imageFiles: draft.imageFiles.map((item) => item.file),
@@ -341,6 +350,29 @@ function ProductEditorModal({
                   </label>
 
                 </div>
+
+                {/* Size Stock Editor */}
+                {draft.sizes.length > 0 && (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-500">Stock per Size</span>
+                    <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+                      {draft.sizes.map((size) => (
+                        <label key={size} className="flex flex-col items-center gap-1 rounded-lg border border-neutral-200 bg-neutral-50 p-2">
+                          <span className="text-[11px] font-bold text-neutral-900">{size}</span>
+                          <input
+                            type="number"
+                            min="0"
+                            value={draft.sizeStock[size] || ''}
+                            onChange={(e) => setDraft({ ...draft, sizeStock: { ...draft.sizeStock, [size]: e.target.value } })}
+                            placeholder="0"
+                            className="w-full rounded border border-neutral-200 bg-white p-1.5 text-center font-mono text-xs outline-hidden focus:border-neutral-900"
+                          />
+                        </label>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-neutral-400">Set quantity per size. Leave empty to use total stock.</p>
+                  </div>
+                )}
 
                 <label className="flex flex-col gap-1.5">
                   <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-500">Description</span>

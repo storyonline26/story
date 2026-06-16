@@ -41,6 +41,7 @@ export const serializeProduct = (product) => {
     status: product.isActive ? 'active' : 'draft',
     isActive: product.isActive,
     gender: product.gender || 'unisex',
+    sizeStock: product.sizeStock || null,
     location: product.location
   };
 };

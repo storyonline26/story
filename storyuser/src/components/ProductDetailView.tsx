@@ -200,20 +200,27 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     </button>
                   </div>
                   <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
-                    {product.sizes.map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => { setSelectedSize(s); setSizeError(false); }}
-                        className={`h-11 rounded border text-[13px] font-medium transition ${
-                          selectedSize === s
-                            ? 'border-[#111111] bg-[#111111] text-white'
-                            : 'border-[#DDD8CF] bg-white text-[#111111] hover:border-[#111111]'
-                        }`}
-                      >
-                        {s}
-                      </button>
-                    ))}
+                    {product.sizes.map((s) => {
+                      const sizeQty = product.sizeStock?.[s];
+                      const outOfStock = sizeQty !== undefined && sizeQty !== null && sizeQty <= 0;
+                      return (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => { if (!outOfStock) { setSelectedSize(s); setSizeError(false); } }}
+                          disabled={outOfStock}
+                          className={`h-11 rounded border text-[13px] font-medium transition ${
+                            outOfStock
+                              ? 'border-[#EEE] bg-[#FAFAFA] text-[#CCC] cursor-not-allowed line-through'
+                              : selectedSize === s
+                                ? 'border-[#111111] bg-[#111111] text-white'
+                                : 'border-[#DDD8CF] bg-white text-[#111111] hover:border-[#111111]'
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      );
+                    })}
                   </div>
                   {sizeError && (
                     <p className="mt-2 text-[13px] font-medium text-red-600">Please select a size.</p>

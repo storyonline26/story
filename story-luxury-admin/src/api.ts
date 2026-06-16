@@ -90,7 +90,9 @@ const mapCategory = (category: any): Category => ({
   image: category.image || '',
   description: category.description || '',
   isDynamic: Boolean(category.isDynamic),
-  sortOrder: Number(category.sortOrder || 0)
+  sortOrder: Number(category.sortOrder || 0),
+  sizes: category.sizes || null,
+  genderFilter: category.genderFilter || 'all'
 });
 
 const mapOrder = (order: any): Order => ({
@@ -351,7 +353,9 @@ const toCategoryPayload = (category: Omit<Category, 'id' | 'productCount'> | Par
     parent: category.parent,
     isDynamic: category.isDynamic,
     sortOrder: category.sortOrder,
-    isActive: category.status ? category.status === 'Active' : undefined
+    isActive: category.status ? category.status === 'Active' : undefined,
+    sizes: (category as any).sizes || undefined,
+    genderFilter: (category as any).genderFilter || undefined
   });
 
   if (!category.imageFile) return payload;

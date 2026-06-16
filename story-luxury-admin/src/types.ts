@@ -24,6 +24,7 @@ export interface Product {
   price: number;
   originalPrice?: number;
   stock: number;
+  sizeStock?: Record<string, number> | null;
   status: 'active' | 'draft';
   location?: string;
 }

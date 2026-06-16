@@ -38,6 +38,14 @@ const markOrderPaid = async ({ order, razorpayPaymentId, razorpaySignature, meth
         where: { id: item.productId },
         data: { stock: { decrement: item.quantity } }
       });
+      // Decrement size-level stock if sizeStock exists
+      if (product.sizeStock && item.size) {
+        const sizeStock = { ...(product.sizeStock || {}) };
+        if (sizeStock[item.size] !== undefined) {
+          sizeStock[item.size] = Math.max(0, sizeStock[item.size] - item.quantity);
+          await tx.product.update({ where: { id: item.productId }, data: { sizeStock } });
+        }
+      }
     }
 
     if (order.couponId) {

@@ -119,6 +119,7 @@ const normalizeProductInput = async (body, imageFiles = [], secondaryImageFile) 
     sizes: parseMaybeJson(body.sizes, undefined),
     colors: parseMaybeJson(body.colors, undefined),
     gender: body.gender || undefined,
+    sizeStock: parseMaybeJson(body.sizeStock, undefined),
     price: hasOriginalPrice ? originalPrice : body.price,
     discountedPrice: hasOriginalPrice
       ? (originalPrice > sellingPrice ? sellingPrice : null)

@@ -99,6 +99,7 @@ model Product {
   sku             String?     @unique
   isActive        Boolean     @default(true)
   gender          String?     @default("unisex")
+  sizeStock       Json?       // e.g. {"S": 10, "M": 25, "L": 0}
   location        String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt

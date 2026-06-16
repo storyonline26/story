@@ -22,6 +22,7 @@ export interface Product {
   colors?: ColorOption[];
   stock?: number;
   gender?: string;
+  sizeStock?: Record<string, number> | null;
   status?: string;
 }
 
