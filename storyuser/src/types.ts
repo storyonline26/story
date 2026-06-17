@@ -23,6 +23,7 @@ export interface Product {
   stock?: number;
   gender?: string;
   sizeStock?: Record<string, number> | null;
+  tags?: string[];
   status?: string;
 }
 

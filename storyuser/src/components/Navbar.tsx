@@ -127,17 +127,25 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Mobile layout */}
+        {/* Mobile layout: [Hamburger] [Login] [--- STORY ---] [Search] [Cart] */}
         <div className="flex h-[60px] items-center justify-between lg:hidden">
-          {/* Left spacer for centering */}
-          <div className="flex items-center gap-1 w-[100px]">
+          {/* Left: Hamburger + Login */}
+          <div className="flex items-center gap-0.5 w-[90px]">
             <button
               type="button"
               onClick={() => setMobileMenuOpen((open) => !open)}
-              className="flex h-11 w-11 items-center justify-center text-white"
+              className="flex h-10 w-10 items-center justify-center text-white"
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
-              {mobileMenuOpen ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
+              {mobileMenuOpen ? <X size={20} strokeWidth={1.5} /> : <Menu size={20} strokeWidth={1.5} />}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('settings')}
+              className="flex h-10 w-10 items-center justify-center text-white/70 transition hover:text-white"
+              aria-label={isLoggedIn ? 'Account' : 'Login'}
+            >
+              {isLoggedIn ? <User size={18} strokeWidth={1.5} /> : <LogIn size={18} strokeWidth={1.5} />}
             </button>
           </div>
 
@@ -152,34 +160,24 @@ export const Navbar: React.FC<NavbarProps> = ({
             <StoryLogo />
           </button>
 
-          {/* Right icons */}
-          <div className="flex items-center gap-1 w-[100px] justify-end">
+          {/* Right: Search + Cart */}
+          <div className="flex items-center gap-0.5 w-[90px] justify-end">
             <button
               type="button"
               onClick={() => navigate('discover')}
-              className="flex h-11 w-11 items-center justify-center text-white/70"
+              className="flex h-10 w-10 items-center justify-center text-white/70 transition hover:text-white"
               aria-label="Search"
             >
-              <Search size={20} strokeWidth={1.5} />
+              <Search size={18} strokeWidth={1.5} />
             </button>
-            {!isLoggedIn && (
-              <button
-                type="button"
-                onClick={() => navigate('settings')}
-                className="flex h-11 w-11 items-center justify-center text-white/70 transition hover:text-white"
-                aria-label="Login"
-              >
-                <LogIn size={20} strokeWidth={1.5} />
-              </button>
-            )}
             <button
               type="button"
               onClick={onCartToggle}
-              className="relative flex h-11 w-11 items-center justify-center text-white"
+              className="relative flex h-10 w-10 items-center justify-center text-white"
               aria-label="Shopping bag"
             >
-              <ShoppingBag size={20} strokeWidth={1.5} />
-              <span className="absolute right-1 top-1.5 flex h-[16px] min-w-[16px] items-center justify-center rounded-full bg-white px-0.5 text-[9px] font-bold text-[#111111]">
+              <ShoppingBag size={18} strokeWidth={1.5} />
+              <span className="absolute right-0.5 top-1 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-white px-0.5 text-[8px] font-bold text-[#111111]">
                 {cartCount}
               </span>
             </button>

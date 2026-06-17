@@ -265,6 +265,7 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
     [category, categorySlug, source]
   );
   const [activeSize, setActiveSize] = React.useState('');
+  const [activeTag, setActiveTag] = React.useState('');
   const [activeGender, setActiveGender] = React.useState<'all' | 'men' | 'women'>(
     (category?.genderFilter as 'all' | 'men' | 'women') || (categorySlug === 'dresses' ? 'women' : 'all')
   );
@@ -282,6 +283,7 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
 
   React.useEffect(() => {
     setActiveSize('');
+    setActiveTag('');
     setActiveGender((category?.genderFilter as 'all' | 'men' | 'women') || (categorySlug === 'dresses' ? 'women' : 'all'));
     setSortMode('featured');
   }, [categorySlug, category?.genderFilter]);
@@ -293,10 +295,19 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
     [category?.sizes, categoryProducts]
   );
 
+  const tagOptions = React.useMemo(
+    () => Array.from(new Set(categoryProducts.flatMap((product) => product.tags || []))).filter(Boolean),
+    [categoryProducts]
+  );
+
   const visibleProducts = React.useMemo(() => {
     let filtered = activeSize
       ? categoryProducts.filter((product) => product.sizes?.includes(activeSize))
       : categoryProducts;
+
+    if (activeTag) {
+      filtered = filtered.filter((product) => product.tags?.includes(activeTag));
+    }
 
     if (activeGender !== 'all') {
       filtered = filtered.filter((product) => {
@@ -309,7 +320,7 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
     if (sortMode === 'low') return [...filtered].sort((a, b) => a.price - b.price);
     if (sortMode === 'high') return [...filtered].sort((a, b) => b.price - a.price);
     return filtered;
-  }, [activeSize, activeGender, categoryProducts, sortMode]);
+  }, [activeSize, activeTag, activeGender, categoryProducts, sortMode]);
 
   const productGridClass = React.useMemo(() => {
     return 'grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3';
@@ -421,6 +432,14 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
                   <FilterChip label="All" selected={!activeSize} onClick={() => setActiveSize('')} />
                   {sizeOptions.map((size) => (
                     <FilterChip key={size} label={size} selected={activeSize === size} onClick={() => setActiveSize(size)} />
+                  ))}
+                </div>
+              )}
+              {tagOptions.length > 0 && (
+                <div className="scrollbar-hide flex flex-nowrap gap-1.5 overflow-x-auto">
+                  <FilterChip label="All" selected={!activeTag} onClick={() => setActiveTag('')} />
+                  {tagOptions.map((tag) => (
+                    <FilterChip key={tag} label={tag} selected={activeTag === tag} onClick={() => setActiveTag(tag)} />
                   ))}
                 </div>
               )}

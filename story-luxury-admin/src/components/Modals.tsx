@@ -76,6 +76,7 @@ type ProductDraft = {
   care: string;
   details: string[];
   sizes: string[];
+  tags: string;
   colors: ProductColor[];
   images: string[];
   imageFiles: ImageDraft[];
@@ -129,6 +130,7 @@ function ProductEditorModal({
       care: product?.care || '',
       details: product?.details?.length ? product.details : [''],
       sizes: product?.sizes?.length ? product.sizes : ['S', 'M', 'L'],
+      tags: product?.tags?.length ? product.tags.join(', ') : '',
       colors: product?.colors?.length ? product.colors : [{ name: 'Black', hex: '#111111' }],
       images: imageList.filter(Boolean),
       imageFiles: [],
@@ -234,6 +236,7 @@ function ProductEditorModal({
       care: draft.care,
       details: cleanList(draft.details),
       sizes: draft.sizes,
+      tags: draft.tags ? draft.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
       colors: draft.colors.filter((color) => color.name.trim() && color.hex.trim()),
       status: draft.status
     };
@@ -382,6 +385,17 @@ function ProductEditorModal({
                     rows={4}
                     className="resize-none rounded-lg border border-neutral-200 p-2.5 leading-relaxed outline-hidden focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
                   />
+                </label>
+
+                <label className="flex flex-col gap-1.5">
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-500">Tags (comma separated)</span>
+                  <input
+                    value={draft.tags}
+                    onChange={event => setDraft({ ...draft, tags: event.target.value })}
+                    placeholder="tshirt, casual, nike, formal"
+                    className="rounded-lg border border-neutral-200 p-2.5 outline-hidden focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
+                  />
+                  <p className="text-[10px] text-neutral-400">Used for filtering on category pages (e.g. T-shirts, Shirts, Jackets)</p>
                 </label>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

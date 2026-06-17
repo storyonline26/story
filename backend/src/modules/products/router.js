@@ -120,6 +120,7 @@ const normalizeProductInput = async (body, imageFiles = [], secondaryImageFile) 
     colors: parseMaybeJson(body.colors, undefined),
     gender: body.gender || undefined,
     sizeStock: parseMaybeJson(body.sizeStock, undefined),
+    tags: body.tags ? (Array.isArray(body.tags) ? body.tags : String(body.tags).split(',').map(t => t.trim()).filter(Boolean)) : undefined,
     price: hasOriginalPrice ? originalPrice : body.price,
     discountedPrice: hasOriginalPrice
       ? (originalPrice > sellingPrice ? sellingPrice : null)
@@ -141,7 +142,8 @@ productsRouter.get('/', validate(listSchema), asyncHandler(async (req, res) => {
     ...(search ? {
       OR: [
         { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } }
+        { description: { contains: search, mode: 'insensitive' } },
+        { tags: { has: search.toLowerCase() } }
       ]
     } : {}),
     ...(inStockOnly ? { stock: { gt: 0 } } : {})
