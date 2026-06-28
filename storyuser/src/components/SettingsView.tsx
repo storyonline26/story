@@ -459,84 +459,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                         )}
                       </div>
 
-                      <div className="rounded-lg border border-[#DDD8CF] bg-white p-5">
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <h2 className="text-lg font-semibold text-[#111111]">Security</h2>
-                            <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-[#6B625A]">Password access</p>
-                          </div>
-                          <KeyRound size={18} strokeWidth={1.5} />
-                        </div>
-                        <div className="mt-5 rounded-md bg-[#FFFFFF] p-4">
-                          <p className="text-sm font-semibold text-[#111111]">Recovery email</p>
-                          <p className="mt-1 text-sm text-[#6B625A]">{userProfile.email || 'No email added'}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setResetNotice(`Recovery mail prepared for ${userProfile.email || 'your account email'}.`);
-                            window.setTimeout(() => setResetNotice(''), 3000);
-                          }}
-                          className="mt-4 h-10 rounded-md border border-[#111111] px-4 font-mono text-[10px] uppercase tracking-widest transition hover:bg-[#111111] hover:text-white"
-                        >
-                          Reset passcode
-                        </button>
-                        {resetNotice && (
-                          <p className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm leading-6 text-emerald-700">
-                            {resetNotice}
-                          </p>
-                        )}
-                      </div>
+
                     </div>
 
-                    <div className="rounded-lg border border-[#DDD8CF] bg-white p-5">
-                      <h2 className="text-lg font-semibold text-[#111111]">Preferences</h2>
-                      <div className="mt-5 divide-y divide-[#EFECE6] rounded-lg border border-[#EFECE6]">
-                        <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
-                          <div>
-                            <p className="text-sm font-semibold text-[#111111]">STORY journal newsletter</p>
-                            <p className="mt-1 text-sm text-[#6B625A]">Capsule launches, private sale notices, and delivery updates.</p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={saveNewsletter}
-                            aria-pressed={userProfile.newsletter}
-                            className={`relative h-8 w-16 rounded-full border p-1 transition ${
-                              userProfile.newsletter ? 'border-[#111111] bg-[#111111]' : 'border-[#111111] bg-white'
-                            }`}
-                            id="newsletter-preference-toggle"
-                          >
-                            <span
-                              className={`block h-full w-6 rounded-full transition ${
-                                userProfile.newsletter ? 'translate-x-8 bg-white' : 'translate-x-0 bg-[#111111]'
-                              }`}
-                            />
-                          </button>
-                        </div>
 
-                        <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
-                          <div>
-                            <p className="inline-flex items-center gap-2 text-sm font-semibold text-[#111111]">
-                              <Globe size={15} strokeWidth={1.5} />
-                              Preferred language
-                            </p>
-                            <p className="mt-1 text-sm text-[#6B625A]">Used for account and delivery communication.</p>
-                          </div>
-                          <select
-                            value={userProfile.language}
-                            onChange={(event) => saveLanguage(event.target.value)}
-                            className="h-11 w-full rounded-md border border-[#111111] bg-white px-3 font-mono text-[10px] uppercase tracking-widest text-[#111111] sm:w-56"
-                            id="language-preference-dropdown"
-                          >
-                            <option value="ENGLISH">ENGLISH</option>
-                            <option value="HINDI">HINDI</option>
-                            <option value="MARATHI">MARATHI</option>
-                            <option value="TAMIL">TAMIL</option>
-                            <option value="BENGALI">BENGALI</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
+
                   </div>
                 </Panel>
               </section>
