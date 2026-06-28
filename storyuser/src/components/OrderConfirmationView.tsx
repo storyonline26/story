@@ -49,12 +49,12 @@ export const OrderConfirmationView: React.FC<OrderConfirmationViewProps> = ({
   const subtotal = order ? order.subtotal : 11480;
   const shipping = order ? order.shipping : 0;
   const tax = order ? order.tax : 2066.40;
-  const total = order ? order.total : 13546.40;
+  const total = order ? order.total : 0;
 
   const address = order ? order.address : {
-    fullName: "Ananya Sharma",
-    street: "12 Kala Ghoda Lane",
-    city: "Mumbai, Maharashtra 400001",
+    fullName: "",
+    street: "",
+    city: "",
     country: "India"
   };
 

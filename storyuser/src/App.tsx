@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActiveScreen, Category, Product, CartItem, UserProfile, Address, Order, ColorOption, StorefrontContent } from './types';
-import { PRODUCTS, INITIAL_USER_PROFILE } from './data';
+import { INITIAL_USER_PROFILE } from './data';
+import { ConnectionError } from './components/ConnectionError';
 import { storyApi } from './api';
 import { Navbar } from './components/Navbar';
 import { AnnouncementTicker } from './components/AnnouncementTicker';
@@ -14,6 +15,8 @@ import { ProductDetailView } from './components/ProductDetailView';
 import { SettingsView } from './components/SettingsView';
 import { OrderConfirmationView } from './components/OrderConfirmationView';
 import { CartDrawer } from './components/CartDrawer';
+import { BackToTop } from './components/BackToTop';
+import { useRecentlyViewed, useWishlist } from './utils/useShopFeatures';
 import { LoginView } from './components/LoginView';
 import { BagView } from './components/BagView';
 import { PolicyKey, PolicyView } from './components/PolicyView';
@@ -187,18 +190,21 @@ const screenPath = (screen: ActiveScreen, categorySlug: string, policyKey: Polic
 
 export default function App() {
   const initialRoute = React.useMemo(() => parseRoute(), []);
+  const { addRecent } = useRecentlyViewed();
   const [activeScreen, setActiveScreen] = React.useState<ActiveScreen>(initialRoute.screen);
   const [activeProduct, setActiveProduct] = React.useState<Product | null>(null);
   const [activeCategorySlug, setActiveCategorySlug] = React.useState(initialRoute.categorySlug);
   const [activePolicyKey, setActivePolicyKey] = React.useState<PolicyKey>(initialRoute.policyKey);
-  const [products, setProducts] = React.useState<Product[]>(PRODUCTS);
+  const [products, setProducts] = React.useState<Product[]>([]);
   const [categories, setCategories] = React.useState<Category[]>([]);
   const [storefrontContent, setStorefrontContent] = React.useState<StorefrontContent>(DEFAULT_STOREFRONT_CONTENT);
   const [orders, setOrders] = React.useState<Order[]>([]);
   const [apiNotice, setApiNotice] = React.useState('');
+  const [backendDown, setBackendDown] = React.useState(false);
   const [googleClientId, setGoogleClientId] = React.useState('');
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const wishlist = useWishlist(isLoggedIn);
   const [checkoutBusy, setCheckoutBusy] = React.useState(false);
   const [checkoutMessage, setCheckoutMessage] = React.useState('');
   const [checkoutError, setCheckoutError] = React.useState('');
@@ -239,7 +245,7 @@ export default function App() {
         if (mounted && apiProducts.length > 0) setProducts(apiProducts);
       })
       .catch(() => {
-        if (mounted) setApiNotice('Backend catalog unavailable. Showing local STORY India collection.');
+        if (mounted) setBackendDown(true);
       });
 
     storyApi.settings()
@@ -406,6 +412,7 @@ export default function App() {
   const handleSelectProduct = (product: Product) => {
     setActiveProduct(product);
     setActiveScreen('detail');
+    addRecent(product.id);
   };
 
   const handleOpenCategory = (categorySlug: string) => {
@@ -612,7 +619,13 @@ export default function App() {
         </div>
       )}
       <main className="flex-grow">
-        {activeScreen === 'shop' && (
+        {backendDown && products.length === 0 && activeScreen === 'shop' && (
+          <ConnectionError
+            type="page"
+            onRetry={() => { setBackendDown(false); window.location.reload(); }}
+          />
+        )}
+        {activeScreen === 'shop' && !backendDown && (
           <ShopView
             products={products}
             categories={categories}
@@ -674,6 +687,8 @@ export default function App() {
             cartItems={cartItems}
             onUpdateQuantity={handleUpdateQuantity}
             onRemoveItem={handleRemoveItem}
+            onToggleWishlist={wishlist.toggle}
+            isWishlisted={wishlist.isWishlisted}
           />
         )}
 
@@ -798,6 +813,7 @@ export default function App() {
         }}
         onOpenPolicy={handleOpenPolicy}
       />
+      <BackToTop />
     </div>
   );
 }

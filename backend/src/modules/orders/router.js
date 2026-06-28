@@ -277,7 +277,7 @@ adminOrdersRouter.get('/', asyncHandler(async (req, res) => {
       ...serializeOrder(order),
       customerName: order.user
         ? `${order.user.firstName}${order.user.lastName ? ` ${order.user.lastName}` : ''}`
-        : order.addressSnapshot?.fullName || order.addressSnapshot?.name || 'STORY Client',
+        : order.addressSnapshot?.fullName || order.addressSnapshot?.name || 'Customer',
       customerEmail: order.user?.email || '',
       amount: toNumber(order.total),
       paymentStatus: order.paymentStatus,

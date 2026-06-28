@@ -32,13 +32,13 @@ interface SettingsViewProps {
   onSignOut?: () => void;
   initialTab?: SettingsTab;
 }
-
-type SettingsTab = 'profile' | 'orders' | 'settings';
+type SettingsTab = 'orders' | 'addresses' | 'profile' | 'wishlist';
 
 const tabs: Array<{ id: SettingsTab; label: string; icon: React.ElementType }> = [
-  { id: 'profile', label: 'Profile', icon: UserRound },
   { id: 'orders', label: 'Orders', icon: PackageCheck },
-  { id: 'settings', label: 'Settings', icon: Settings }
+  { id: 'addresses', label: 'Addresses', icon: MapPin },
+  { id: 'profile', label: 'Profile', icon: UserRound },
+  { id: 'wishlist', label: 'Wishlist', icon: ShoppingBag }
 ];
 
 const statusSteps = ['confirmed', 'processing', 'shipped', 'delivered'];
@@ -238,7 +238,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
         <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <nav className="grid grid-cols-3 overflow-hidden rounded-lg border border-[#DDD8CF] bg-white shadow-sm lg:grid-cols-1" aria-label="Account sections">
+            <nav className="scrollbar-hide flex gap-1 overflow-x-auto rounded-lg border border-[#DDD8CF] bg-white p-1 shadow-sm lg:flex-col lg:gap-0 lg:overflow-visible lg:p-0" aria-label="Account sections">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -251,7 +251,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       setSelectedOrderId(null);
                     }}
                     aria-pressed={isActive}
-                    className={`flex min-h-12 flex-col items-center justify-center gap-1 border-r border-[#EFECE6] px-2 text-center transition last:border-r-0 lg:min-h-0 lg:flex-row lg:justify-start lg:border-b lg:border-r-0 lg:px-4 lg:py-3.5 lg:text-left lg:last:border-b-0 ${
+                    className={`flex shrink-0 items-center gap-2 rounded-md px-4 py-2.5 text-center transition lg:w-full lg:justify-start lg:rounded-none lg:border-b lg:border-[#EFECE6] lg:px-4 lg:py-3.5 lg:last:border-b-0 ${
                       isActive ? 'bg-[#111111] text-white' : 'text-[#6B625A] hover:bg-[#F8F6F1] hover:text-[#111111]'
                     }`}
                     id={`sidebar-tab-${tab.id}`}
@@ -387,7 +387,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
 
 
-            {activeTab === 'settings' && (
+            {activeTab === 'addresses' && (
               <section className="grid gap-6">
                 <Panel title="Settings" meta="Personal details, address, and preferences">
                   <div className="grid gap-6">
@@ -541,6 +541,17 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 </Panel>
               </section>
             )}
+            {activeTab === 'wishlist' && (
+              <section className="grid gap-6">
+                <Panel title="Wishlist" meta="Your saved items">
+                  <div className="flex flex-col items-center py-12 text-center">
+                    <ShoppingBag size={32} className="text-[#6B625A]" />
+                    <p className="mt-4 text-[15px] font-semibold text-[#111111]">Your wishlist is empty</p>
+                    <p className="mt-1 text-[13px] text-[#6B625A]">Save items you love and come back to them later.</p>
+                  </div>
+                </Panel>
+              </section>
+            )}
           </main>
         </div>
       </div>
@@ -593,6 +604,7 @@ function InfoTile({ label, value, icon: Icon }: { label: string; value: string; 
 }
 
 const OrderRow: React.FC<{ order: Order; onOpen: () => void }> = ({ order, onOpen }) => {
+  const progress = statusIndex(order.status);
   return (
     <button
       type="button"
@@ -603,6 +615,12 @@ const OrderRow: React.FC<{ order: Order; onOpen: () => void }> = ({ order, onOpe
         <span className="block text-sm font-semibold text-[#111111]">{orderNumber(order.id)}</span>
         <span className="mt-1 block font-mono text-[10px] uppercase tracking-widest text-[#6B625A]">
           {formatDate(order.date)}
+        </span>
+        {/* Mini progress bar */}
+        <span className="mt-2 flex gap-1">
+          {statusSteps.map((_, i) => (
+            <span key={i} className={`h-1 flex-1 rounded-full ${i <= progress ? 'bg-[#111111]' : 'bg-[#DDD8CF]'}`} />
+          ))}
         </span>
       </span>
       <StatusBadge status={order.status} />

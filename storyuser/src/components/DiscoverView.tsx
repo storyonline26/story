@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Category, Product, StorefrontContent } from '../types';
-import { PRODUCTS } from '../data';
 import { formatINR } from '../utils/currency';
 
 interface DiscoverViewProps {
@@ -315,7 +314,7 @@ const ProductCard: React.FC<{
 };
 
 export const DiscoverView: React.FC<DiscoverViewProps> = ({ onSelectProduct, products, categories = [], content }) => {
-  const rawProductSource = products && products.length > 0 ? products : PRODUCTS;
+  const rawProductSource = products && products.length > 0 ? products : [];
   const productSource = React.useMemo(() => {
     if (content.collectionProductIds.length === 0) return rawProductSource;
     const selected = content.collectionProductIds
@@ -470,108 +469,51 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({ onSelectProduct, pro
       id="discover-view-container"
       className="bg-[#f7f7f4] pb-16 text-[#111111] sm:pb-20"
     >
-      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-7 lg:px-8 lg:py-8">
-        <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-stretch">
-          <div className="rounded-xl border border-[#d8d3ca] bg-white p-5 shadow-sm sm:p-7 lg:p-8">
-            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-[#6f6b62]">
-              {content.discoverEyebrow || 'Curated drops'}
-            </span>
-            <h1 className="mt-3 max-w-3xl text-4xl font-semibold uppercase leading-none text-[#111111] sm:text-5xl lg:text-6xl">
-              Shop the Story Edit
-            </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-[#5f5b52]">
-              {content.collectionBody || 'Verified branded fashion, curated in India across clothing, footwear, and everyday essentials.'}
-            </p>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-lg bg-[#eef2ed] p-4">
-                <PackageSearch size={17} strokeWidth={1.5} />
-                <p className="mt-3 font-mono text-[9px] uppercase tracking-widest text-[#6f6b62]">Available</p>
-                <p className="mt-1 text-sm font-semibold">{countLabel(productSource.length, 'curated piece', 'curated pieces')}</p>
-              </div>
-              <div className="rounded-lg bg-[#f3f0ea] p-4">
-                <ShieldCheck size={17} strokeWidth={1.5} />
-                <p className="mt-3 font-mono text-[9px] uppercase tracking-widest text-[#6f6b62]">Quality</p>
-                <p className="mt-1 text-sm font-semibold">Verified branded fashion</p>
-              </div>
-              <div className="rounded-lg bg-[#edf0f4] p-4">
-                <Truck size={17} strokeWidth={1.5} />
-                <p className="mt-3 font-mono text-[9px] uppercase tracking-widest text-[#6f6b62]">Delivery</p>
-                <p className="mt-1 text-sm font-semibold">Tracked India shipping</p>
-              </div>
-            </div>
-
-            <div className="mt-6 max-w-2xl">
-              <label htmlFor="discover-search-input" className="sr-only">Search collections</label>
-              <div className="relative flex items-center rounded-full border border-[#d7d4cc] bg-[#fbfbf8] shadow-sm focus-within:border-[#111111]">
-                <Search size={18} strokeWidth={1.5} className="ml-4 shrink-0 text-[#111111]" />
-                <input
-                  type="text"
-                  placeholder={content.discoverSearchPlaceholder || 'Search products, categories, brands or sizes'}
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  className="min-w-0 flex-1 border-0 bg-transparent px-4 py-3.5 text-sm text-[#111111] placeholder:text-[#8b877e] focus:outline-none"
-                  id="discover-search-input"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    aria-label="Clear search"
-                    className="mr-2 rounded-full p-2 text-[#767676] transition hover:bg-white hover:text-[#121212]"
-                  >
-                    <X size={16} strokeWidth={1.5} />
-                  </button>
-                )}
-              </div>
-            </div>
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6">
+        {/* Compact search + filters header */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-[#111111] sm:text-2xl">Collections</h1>
+            <p className="text-[12px] text-[#6B625A]">{countLabel(filteredProducts.length, 'product', 'products')} found</p>
           </div>
-
-          <div className="relative min-h-72 overflow-hidden rounded-xl border border-[#d8d3ca] bg-[#e7e9e4] shadow-sm lg:min-h-full">
-            <img
-              src={heroImage}
-              alt="STORY collection edit"
-              className="h-full min-h-72 w-full object-cover object-top"
-              loading="lazy"
+          <div className="relative flex-1 max-w-md">
+            <Search size={16} strokeWidth={1.5} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B625A]" />
+            <input
+              type="text"
+              placeholder={content.discoverSearchPlaceholder || 'Search products, categories...'}
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              className="h-10 w-full rounded-full border border-[#DDD8CF] bg-white pl-9 pr-4 text-[13px] text-[#111111] placeholder:text-[#8b877e] outline-none focus:border-[#111111]"
+              id="discover-search-input"
             />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-5 text-white">
-              <p className="font-mono text-[9px] uppercase tracking-widest text-white/75">This week</p>
-              <p className="mt-1 text-lg font-semibold uppercase">Fresh edits for daily wear</p>
-            </div>
+            {searchQuery && (
+              <button type="button" onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B625A]">
+                <X size={14} />
+              </button>
+            )}
           </div>
-        </section>
+        </div>
 
-        <section aria-label="Shop by category" className="mt-5">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold text-[#111111]">Shop by category</h2>
+        {/* Category chips - compact horizontal scroll */}
+        <div className="mt-4 scrollbar-hide flex gap-2 overflow-x-auto">
+          <button
+            type="button"
+            onClick={() => setCategoryFilter('all')}
+            className={`h-9 shrink-0 rounded-full border px-4 text-[11px] font-medium transition ${selectedCategory === 'all' ? 'border-[#111111] bg-[#111111] text-white' : 'border-[#DDD8CF] bg-white text-[#6B625A] hover:border-[#111111]'}`}
+          >
+            All ({productSource.length})
+          </button>
+          {categoryOptions.map((category) => (
             <button
+              key={category.id}
               type="button"
-              onClick={() => setCategoryFilter('all')}
-              className={`hidden rounded-full border px-4 py-2 font-mono text-[9px] uppercase tracking-widest transition sm:inline-flex ${
-                selectedCategory === 'all'
-                  ? 'border-[#111111] bg-[#111111] text-white'
-                  : 'border-[#d8d3ca] bg-white text-[#5f5b52] hover:border-[#111111] hover:text-[#111111]'
-              }`}
+              onClick={() => setCategoryFilter(category.slug)}
+              className={`h-9 shrink-0 rounded-full border px-4 text-[11px] font-medium transition ${activeCategory?.id === category.id ? 'border-[#111111] bg-[#111111] text-white' : 'border-[#DDD8CF] bg-white text-[#6B625A] hover:border-[#111111]'}`}
             >
-              All collections
+              {category.name} ({categoryCounts.get(category.slug) || 0})
             </button>
-          </div>
-          <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 md:grid-cols-3 lg:grid-cols-4">
-            {categoryOptions.map((category, index) => {
-              const count = categoryCounts.get(category.slug) || 0;
-              return (
-                <CategoryCard
-                  key={category.id}
-                  category={category}
-                  selected={activeCategory?.id === category.id}
-                  count={count}
-                  fallbackImage={FALLBACK_CATEGORY_IMAGES[index % FALLBACK_CATEGORY_IMAGES.length]}
-                  onClick={() => setCategoryFilter(category.slug)}
-                />
-              );
-            })}
-          </div>
-        </section>
+          ))}
+        </div>
 
         <section className="mt-5 rounded-xl border border-[#d8d3ca] bg-white p-4 shadow-sm sm:p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -633,11 +575,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({ onSelectProduct, pro
                 />
               ))}
             </div>
-            {filteredProducts.length <= 4 && (
-              <div className="mt-6 rounded-lg border border-dashed border-[#DDD8CF] bg-white p-6 text-center">
-                <p className="text-[14px] text-[#6B625A]">More edits coming soon — new drops every week.</p>
-              </div>
-            )}
+
           </>
         ) : (
           <div className="mt-5 rounded-xl border border-dashed border-[#cfcac0] bg-white px-6 py-16 text-center shadow-sm" id="discover-empty-state">
@@ -656,9 +594,6 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({ onSelectProduct, pro
           </div>
         )}
 
-        <p className="mt-10 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-[#6f6f6f]">
-          Verified authentic pieces &bull; Curated in India &bull; Easy returns and exchanges
-        </p>
       </div>
 
       <AnimatePresence>

@@ -1,21 +1,7 @@
 import React from 'react';
-import {
-  ArrowLeft,
-  ArrowRight,
-  Grid2X2,
-  Minus,
-  PackageSearch,
-  Plus,
-  Ruler,
-  ShieldCheck,
-  ShoppingBag,
-  SlidersHorizontal,
-  Sparkles,
-  Truck
-} from 'lucide-react';
+import { ArrowLeft, Heart, Minus, PackageSearch, Plus, ShoppingBag } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Category, ColorOption, Product } from '../types';
-import { PRODUCTS } from '../data';
 import { formatINR } from '../utils/currency';
 
 interface CategoryGenderViewProps {
@@ -29,15 +15,11 @@ interface CategoryGenderViewProps {
   onAddToCart?: (product: Product) => void;
   onUpdateQuantity?: (id: string, delta: number) => void;
   onRemoveItem?: (id: string) => void;
+  onToggleWishlist?: (productId: string) => void;
+  isWishlisted?: (productId: string) => boolean;
 }
 
-interface FilterChipProps {
-  label: string;
-  selected: boolean;
-  onClick: () => void;
-}
-
-const fallbackHeroImage = 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=85';
+const ITEMS_PER_PAGE = 12;
 
 const normalize = (value = '') =>
   value.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -54,195 +36,126 @@ const displayCategoryName = (category?: Category, slug = '') => {
 
 const productMatchesCategory = (product: Product, category?: Category, slug?: string) => {
   if (!category && !slug) return false;
-  const productCategory = normalize(product.category);
-  const productCategorySingular = singular(product.category);
-  const categoryName = normalize(category?.name || '');
-  const categoryNameSingular = singular(category?.name || '');
-  const categorySlug = normalize(category?.slug || slug || '');
-  const categorySlugSingular = singular(category?.slug || slug || '');
-
-  return product.categoryId === category?.id
-    || productCategory === categoryName
-    || productCategory === categorySlug
-    || productCategorySingular === categoryNameSingular
-    || productCategorySingular === categorySlugSingular;
+  const pc = normalize(product.category);
+  const pcs = singular(product.category);
+  const cn = normalize(category?.name || '');
+  const cns = singular(category?.name || '');
+  const cs = normalize(category?.slug || slug || '');
+  const css = singular(category?.slug || slug || '');
+  return product.categoryId === category?.id || pc === cn || pc === cs || pcs === cns || pcs === css;
 };
 
-const compactCountLabel = (count: number, singularLabel: string, pluralLabel: string) =>
-  `${count} ${count === 1 ? singularLabel : pluralLabel}`;
+/* ─── Product Card ─── */
+const ProductCard: React.FC<{
+  product: Product;
+  onSelect: (p: Product) => void;
+  onAddToCart?: (p: Product) => void;
+  cartQty: number;
+  cartItemId: string;
+  onUpdateQuantity?: (id: string, delta: number) => void;
+  onRemoveItem?: (id: string) => void;
+  onToggleWishlist?: (productId: string) => void;
+  isWishlisted?: boolean;
+}> = ({ product, onSelect, onAddToCart, cartQty, cartItemId, onUpdateQuantity, onRemoveItem, onToggleWishlist, isWishlisted }) => {
+  const discounted = typeof product.originalPrice === 'number' && product.originalPrice > product.price;
+  const discountPercent = discounted ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100) : 0;
 
-const FilterChip: React.FC<FilterChipProps> = ({ label, selected, onClick }) => (
+  return (
+    <div className="group flex flex-col overflow-hidden rounded-lg border border-[#DDD8CF] bg-white">
+      {/* Image */}
+      <button type="button" onClick={() => onSelect(product)} className="relative aspect-[3/4] overflow-hidden bg-[#EFECE6]">
+        {product.image ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            className="h-full w-full object-cover object-[center_top] transition duration-300 group-hover:scale-105"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <span className="flex h-full w-full items-center justify-center">
+            <PackageSearch size={24} className="text-[#6B625A]" />
+          </span>
+        )}
+        {/* Discount badge */}
+        {discounted && (
+          <span className="absolute left-2 top-2 rounded bg-[#111111] px-1.5 py-0.5 text-[10px] font-bold text-white">
+            {discountPercent}% OFF
+          </span>
+        )}
+        {/* Wishlist heart */}
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onToggleWishlist?.(product.id); }}
+          className={`absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm transition ${isWishlisted ? 'text-red-500' : 'text-[#6B625A] hover:text-red-500'}`}
+        >
+          <Heart size={16} strokeWidth={1.5} fill={isWishlisted ? 'currentColor' : 'none'} />
+        </button>
+      </button>
+
+      {/* Info */}
+      <div className="flex flex-1 flex-col p-2.5 sm:p-3">
+        <button type="button" onClick={() => onSelect(product)} className="text-left">
+          <p className="truncate text-[12px] font-semibold text-[#111111] sm:text-[13px]">{product.name}</p>
+          <p className="mt-0.5 text-[10px] uppercase text-[#6B625A]">{product.category}</p>
+        </button>
+        <div className="mt-1.5 flex items-baseline gap-2">
+          <span className="text-[14px] font-bold text-[#111111]">{formatINR(product.price)}</span>
+          {discounted && (
+            <span className="text-[11px] text-[#6B625A] line-through">{formatINR(product.originalPrice!)}</span>
+          )}
+        </div>
+
+        {/* Add to Bag / Qty stepper */}
+        <div className="mt-auto pt-2.5">
+          {cartQty === 0 ? (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onAddToCart?.(product); }}
+              className="flex h-9 w-full items-center justify-center gap-1.5 border border-[#111111] text-[10px] font-semibold uppercase tracking-wider text-[#111111] transition hover:bg-[#111111] hover:text-white"
+            >
+              <ShoppingBag size={13} strokeWidth={1.6} />
+              Add to Bag
+            </button>
+          ) : (
+            <div className="flex h-9 items-center overflow-hidden border border-[#111111]">
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); cartQty === 1 && onRemoveItem ? onRemoveItem(cartItemId) : onUpdateQuantity?.(cartItemId, -1); }}
+                className="flex h-full w-9 items-center justify-center text-[#111111] hover:bg-[#f0ece4]"
+              >
+                <Minus size={13} />
+              </button>
+              <span className="flex-1 text-center text-[12px] font-bold text-[#111111]">{cartQty}</span>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onUpdateQuantity?.(cartItemId, 1); }}
+                className="flex h-full w-9 items-center justify-center text-[#111111] hover:bg-[#f0ece4]"
+              >
+                <Plus size={13} />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── Filter Chip ─── */
+const Chip: React.FC<{ label: string; active: boolean; onClick: () => void }> = ({ label, active, onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className={`h-9 shrink-0 rounded-full border px-4 text-xs font-medium uppercase tracking-[0.12em] transition ${
-      selected
-        ? 'border-black bg-black text-white'
-        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-500'
+    className={`h-8 shrink-0 rounded-full border px-3 text-[11px] font-medium transition ${
+      active ? 'border-[#111111] bg-[#111111] text-white' : 'border-[#DDD8CF] bg-white text-[#6B625A] hover:border-[#111111]'
     }`}
   >
     {label}
   </button>
 );
 
-const ProductTile: React.FC<{
-  product: Product;
-  fallbackImage: string;
-  onSelectProduct: (product: Product) => void;
-  onAddToCart?: (product: Product) => void;
-  cartQty?: number;
-  cartItemId?: string;
-  onUpdateQuantity?: (id: string, delta: number) => void;
-  onRemoveItem?: (id: string) => void;
-}> = ({ product, fallbackImage, onSelectProduct, onAddToCart, cartQty = 0, cartItemId, onUpdateQuantity, onRemoveItem }) => {
-  const imageCandidates = React.useMemo(
-    () => Array.from(new Set([product.image, product.secondaryImage, ...(product.listImages || []), fallbackImage].filter(Boolean))),
-    [fallbackImage, product.image, product.listImages, product.secondaryImage]
-  );
-  const [imageIndex, setImageIndex] = React.useState(0);
-  const [imageUnavailable, setImageUnavailable] = React.useState(false);
-  const currentImage = imageCandidates[imageIndex];
-  const sizes = product.sizes || [];
-  const discounted = typeof product.originalPrice === 'number' && product.originalPrice > product.price;
-  const discountPercent = discounted ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100) : 0;
-
-  React.useEffect(() => {
-    setImageIndex(0);
-    setImageUnavailable(false);
-  }, [product.id, imageCandidates]);
-
-  const handleImageError = () => {
-    if (imageIndex < imageCandidates.length - 1) {
-      setImageIndex((index) => index + 1);
-      return;
-    }
-    setImageUnavailable(true);
-  };
-
-  return (
-    <div className="group w-full overflow-hidden rounded-lg border border-[#d8d3ca] bg-white text-left shadow-sm transition-transform duration-200 hover:-translate-y-1">
-      <button
-        type="button"
-        onClick={() => onSelectProduct(product)}
-        className="w-full text-left"
-      >
-        <span className="relative block aspect-[4/3] overflow-hidden bg-[#e9e4da]">
-          {!imageUnavailable && currentImage ? (
-            <img
-              src={currentImage}
-              alt={product.name}
-              className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.035]"
-              loading="lazy"
-              referrerPolicy="no-referrer"
-              onError={handleImageError}
-            />
-          ) : (
-            <span className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[#eeeae1] px-6 text-center">
-              <PackageSearch size={26} strokeWidth={1.4} className="text-[#111111]" />
-              <span className="font-mono text-[10px] uppercase tracking-widest text-[#5f5b52]">
-                Image preview coming soon
-              </span>
-            </span>
-          )}
-          {discounted && (
-            <span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1 font-mono text-[9px] uppercase tracking-widest text-[#111111] shadow-sm">
-              {discountPercent}% off
-            </span>
-          )}
-        </span>
-        <span className="block p-3 sm:p-4">
-          <span className="flex items-start justify-between gap-3">
-            <span className="min-w-0">
-              <span className="block truncate text-xs font-medium uppercase tracking-wide text-gray-900 sm:text-sm">{product.name}</span>
-              <span className="mt-1 block font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">{product.category}</span>
-            </span>
-            <span className="shrink-0 text-right">
-              <span className="block text-sm font-semibold text-gray-900">{formatINR(product.price)}</span>
-              {discounted && (
-                <span className="mt-1 block font-mono text-[10px] text-[#8b877e] line-through">
-                  {formatINR(product.originalPrice!)}
-                </span>
-              )}
-            </span>
-          </span>
-          <span className="mt-3 block font-mono text-[10px] uppercase tracking-widest text-gray-400">
-            {sizes.slice(0, 5).join(' / ') || 'One size'}
-          </span>
-        </span>
-      </button>
-      <span className="block border-t border-[#ece9e1] px-3 pb-3 pt-2 sm:px-4">
-        {cartQty === 0 ? (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onAddToCart) {
-                onAddToCart(product);
-              } else {
-                onSelectProduct(product);
-              }
-            }}
-            className="flex h-9 w-full items-center justify-center gap-2 bg-[#111111] text-[11px] font-semibold uppercase tracking-wider text-white transition hover:bg-black"
-          >
-            <ShoppingBag size={14} strokeWidth={1.6} />
-            Add to Bag
-          </button>
-        ) : (
-          <div className="flex h-9 items-center overflow-hidden rounded border border-[#111111]">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (cartQty === 1 && onRemoveItem && cartItemId) {
-                  onRemoveItem(cartItemId);
-                } else if (onUpdateQuantity && cartItemId) {
-                  onUpdateQuantity(cartItemId, -1);
-                }
-              }}
-              className="flex h-full w-10 items-center justify-center text-[#111111] transition hover:bg-[#f0ece4]"
-            >
-              <Minus size={14} />
-            </button>
-            <span className="flex-1 text-center text-[13px] font-semibold text-[#111111]">{cartQty}</span>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (onUpdateQuantity && cartItemId) {
-                  onUpdateQuantity(cartItemId, 1);
-                }
-              }}
-              className="flex h-full w-10 items-center justify-center text-[#111111] transition hover:bg-[#f0ece4]"
-            >
-              <Plus size={14} />
-            </button>
-          </div>
-        )}
-      </span>
-    </div>
-  );
-};
-
-const TrustItem: React.FC<{ icon: React.ElementType; label: string; value: string }> = ({ icon: Icon, label, value }) => (
-  <div className="flex items-start gap-3 border-t border-[#dedbd2] py-4 first:border-t-0">
-    <Icon className="mt-0.5 shrink-0 text-[#111111]" size={17} strokeWidth={1.5} />
-    <div>
-      <p className="font-mono text-[9px] uppercase tracking-widest text-[#6f6b62]">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-[#111111]">{value}</p>
-    </div>
-  </div>
-);
-
-const ServiceCard: React.FC<{ icon: React.ElementType; title: string; body: string }> = ({ icon: Icon, title, body }) => (
-  <div className="flex min-w-[180px] shrink-0 items-start gap-2.5 rounded-lg border border-gray-100 bg-white px-3 py-2.5 shadow-sm sm:min-w-[200px] lg:min-w-0 lg:flex-1">
-    <Icon size={15} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[#111111]" />
-    <div>
-      <p className="text-[11px] font-semibold text-[#111111]">{title}</p>
-      <p className="mt-0.5 text-[10px] leading-4 text-gray-500">{body}</p>
-    </div>
-  </div>
-);
-
+/* ─── Main Component ─── */
 export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
   categorySlug,
   categories = [],
@@ -253,310 +166,199 @@ export const CategoryGenderView: React.FC<CategoryGenderViewProps> = ({
   onSelectProduct,
   onAddToCart,
   onUpdateQuantity,
-  onRemoveItem
+  onRemoveItem,
+  onToggleWishlist,
+  isWishlisted
 }) => {
   const category = React.useMemo(
     () => categories.find((item) => normalize(item.slug) === normalize(categorySlug) || singular(item.slug) === singular(categorySlug)),
     [categories, categorySlug]
   );
-  const source = products && products.length > 0 ? products : PRODUCTS;
+  const source = products && products.length > 0 ? products : [];
   const categoryProducts = React.useMemo(
-    () => source.filter((product) => productMatchesCategory(product, category, categorySlug)),
+    () => source.filter((p) => productMatchesCategory(p, category, categorySlug)),
     [category, categorySlug, source]
   );
+
   const [activeSize, setActiveSize] = React.useState('');
   const [activeTag, setActiveTag] = React.useState('');
   const [activeGender, setActiveGender] = React.useState<'all' | 'men' | 'women'>(
-    (category?.genderFilter as 'all' | 'men' | 'women') || (categorySlug === 'dresses' ? 'women' : 'all')
+    (category?.genderFilter as 'all' | 'men' | 'women') || 'all'
   );
-  const [sortMode, setSortMode] = React.useState<'featured' | 'low' | 'high'>('featured');
-  const heroImage = category?.image || fallbackHeroImage;
+  const [sortMode, setSortMode] = React.useState('featured');
+  const [visibleCount, setVisibleCount] = React.useState(ITEMS_PER_PAGE);
+
   const title = displayCategoryName(category, categorySlug);
-  const categoryOptions = React.useMemo(
-    () => categories
-      .filter((item) => item.isActive !== false)
-      .slice()
-      .sort((a, b) => (a.sortOrder - b.sortOrder) || a.name.localeCompare(b.name)),
-    [categories]
-  );
-  const selectedCategorySlug = category?.slug || categorySlug;
 
   React.useEffect(() => {
     setActiveSize('');
     setActiveTag('');
-    setActiveGender((category?.genderFilter as 'all' | 'men' | 'women') || (categorySlug === 'dresses' ? 'women' : 'all'));
+    setActiveGender((category?.genderFilter as 'all' | 'men' | 'women') || 'all');
     setSortMode('featured');
+    setVisibleCount(ITEMS_PER_PAGE);
   }, [categorySlug, category?.genderFilter]);
 
   const sizeOptions = React.useMemo(
-    () => category?.sizes?.length
-      ? category.sizes
-      : Array.from(new Set(categoryProducts.flatMap((product) => product.sizes || []))),
+    () => (category?.sizes?.length ? category.sizes : Array.from(new Set(categoryProducts.flatMap((p) => p.sizes || [])))) as string[],
     [category?.sizes, categoryProducts]
   );
 
   const tagOptions = React.useMemo(
-    () => Array.from(new Set(categoryProducts.flatMap((product) => product.tags || []))).filter(Boolean),
+    () => Array.from(new Set(categoryProducts.flatMap((p) => p.tags || []))).filter(Boolean),
     [categoryProducts]
   );
 
-  const visibleProducts = React.useMemo(() => {
-    let filtered = activeSize
-      ? categoryProducts.filter((product) => product.sizes?.includes(activeSize))
-      : categoryProducts;
-
-    if (activeTag) {
-      filtered = filtered.filter((product) => product.tags?.includes(activeTag));
-    }
-
+  const filteredProducts = React.useMemo(() => {
+    let list = [...categoryProducts];
+    if (activeSize) list = list.filter((p) => p.sizes?.includes(activeSize));
+    if (activeTag) list = list.filter((p) => p.tags?.includes(activeTag));
     if (activeGender !== 'all') {
-      filtered = filtered.filter((product) => {
-        const gender = (product.gender || 'unisex').toLowerCase();
-        if (gender === 'unisex') return true;
-        return gender === activeGender;
-      });
+      list = list.filter((p) => { const g = (p.gender || 'unisex').toLowerCase(); return g === 'unisex' || g === activeGender; });
     }
-
-    if (sortMode === 'low') return [...filtered].sort((a, b) => a.price - b.price);
-    if (sortMode === 'high') return [...filtered].sort((a, b) => b.price - a.price);
-    return filtered;
+    if (sortMode === 'low') list.sort((a, b) => a.price - b.price);
+    if (sortMode === 'high') list.sort((a, b) => b.price - a.price);
+    return list;
   }, [activeSize, activeTag, activeGender, categoryProducts, sortMode]);
 
-  const productGridClass = React.useMemo(() => {
-    return 'grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3';
-  }, []);
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredProducts.length;
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.35 }}
-      className="min-h-[60vh] bg-[#f6f5f1] pb-10 text-[#111111]"
+      transition={{ duration: 0.3 }}
+      className="min-h-screen bg-[#F8F6F1] text-[#111111]"
       id="category-gender-view"
     >
-      {/* Breadcrumb / Back row */}
-      <div className="mx-auto max-w-screen-xl px-4 pt-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          <button
-            type="button"
-            onClick={onBack}
-            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-[#d6d2c8] bg-white px-3 font-mono text-[9px] uppercase tracking-widest text-[#5f5b52] transition hover:border-[#111111] hover:text-[#111111]"
-          >
-            <ArrowLeft size={12} strokeWidth={1.6} />
-            Back
+      {/* ─── Slim Category Banner ─── */}
+      <div className="border-b border-[#DDD8CF] bg-white">
+        <div className="mx-auto flex h-[70px] max-w-screen-xl items-center gap-3 px-4 sm:h-[80px] sm:px-6 lg:px-8">
+          <button type="button" onClick={onBack} className="flex h-9 w-9 items-center justify-center rounded-full border border-[#DDD8CF] text-[#6B625A] transition hover:border-[#111111] hover:text-[#111111]">
+            <ArrowLeft size={16} strokeWidth={1.8} />
           </button>
-          <p className="hidden font-mono text-[9px] uppercase tracking-widest text-[#6f6b62] sm:block">
-            Home / {title}
-          </p>
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-[18px] font-bold text-[#111111] sm:text-[22px]">{title}</h1>
+            <p className="text-[11px] text-[#6B625A]">{filteredProducts.length} Products</p>
+          </div>
+          {onOpenCategory && categories.length > 1 && (
+            <select
+              value={category?.slug || categorySlug}
+              onChange={(e) => onOpenCategory(e.target.value)}
+              className="h-9 rounded-lg border border-[#DDD8CF] bg-white px-2 text-[12px] text-[#111111] outline-none"
+            >
+              {categories.filter((c) => c.isActive !== false).map((c) => (
+                <option key={c.id} value={c.slug}>{c.name}</option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 
-      {/* Compact Hero: 2 columns on desktop */}
-      <section className="mx-auto max-w-screen-xl px-4 pt-3 sm:px-6 lg:px-8">
-        <div className="grid gap-3 lg:grid-cols-[1fr_0.8fr]">
-          {/* Left: Category info */}
-          <div className="rounded-lg border border-[#d8d3ca] bg-white p-4 sm:p-5">
-            <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#6f6b62]">Story category</p>
-            <h1 className="mt-1.5 text-2xl font-semibold uppercase leading-tight text-[#111111] sm:text-3xl">
-              {title}
-            </h1>
-            <p className="mt-2 max-w-lg text-sm leading-6 text-[#5f5b52]">
-              {category?.description || 'Explore STORY pieces selected for this category.'}
-            </p>
-            <div className="mt-3 flex flex-wrap gap-4 border-t border-[#ece9e1] pt-3">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">
-                <span className="font-semibold text-[#111111]">{categoryProducts.length}</span> {categoryProducts.length === 1 ? 'piece' : 'pieces'}
-              </span>
-              <span className="font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">
-                <span className="font-semibold text-[#111111]">{sizeOptions.length || 1}</span> {sizeOptions.length === 1 ? 'size' : 'sizes'}
-              </span>
-              <span className="font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">
-                Tracked India delivery
-              </span>
-            </div>
+      {/* ─── Sticky Filter Bar ─── */}
+      <div className="sticky top-0 z-30 border-b border-[#DDD8CF] bg-white/95 backdrop-blur-sm">
+        <div className="mx-auto max-w-screen-xl px-4 py-2.5 sm:px-6 lg:px-8">
+          <div className="scrollbar-hide flex items-center gap-2 overflow-x-auto">
+            {/* Gender */}
+            {category?.genderFilter !== 'none' && (
+              <>
+                <Chip label="All" active={activeGender === 'all'} onClick={() => setActiveGender('all')} />
+                <Chip label="Men" active={activeGender === 'men'} onClick={() => setActiveGender('men')} />
+                <Chip label="Women" active={activeGender === 'women'} onClick={() => setActiveGender('women')} />
+                <span className="mx-1 h-5 w-px bg-[#DDD8CF]" />
+              </>
+            )}
+            {/* Sizes */}
+            {sizeOptions.length > 0 && sizeOptions.map((s) => (
+              <Chip key={s} label={s} active={activeSize === s} onClick={() => setActiveSize(activeSize === s ? '' : s)} />
+            ))}
+            {/* Sort */}
+            <select
+              value={sortMode}
+              onChange={(e) => setSortMode(e.target.value)}
+              className="ml-auto h-8 shrink-0 rounded-lg border border-[#DDD8CF] bg-white px-2 text-[11px] text-[#111111] outline-none"
+            >
+              <option value="featured">Sort: Featured</option>
+              <option value="low">Price: Low → High</option>
+              <option value="high">Price: High → Low</option>
+            </select>
           </div>
 
-          {/* Right: Category image */}
-          <div className="relative h-[180px] overflow-hidden rounded-lg border border-[#d8d3ca] bg-[#e9e4da] sm:h-[220px] lg:h-full lg:max-h-[280px]">
-            <img
-              src={heroImage}
-              alt={`${title} category`}
-              className="h-full w-full object-cover object-center"
-              onError={(event) => { event.currentTarget.style.display = 'none'; }}
-            />
-          </div>
+          {/* Tags row */}
+          {tagOptions.length > 0 && (
+            <div className="scrollbar-hide mt-2 flex gap-1.5 overflow-x-auto">
+              <Chip label="All" active={!activeTag} onClick={() => setActiveTag('')} />
+              {tagOptions.map((t) => (
+                <Chip key={t} label={t} active={activeTag === t} onClick={() => setActiveTag(activeTag === t ? '' : t)} />
+              ))}
+            </div>
+          )}
         </div>
-      </section>
+      </div>
 
-      {/* Compact Toolbar */}
-      <section className="mx-auto max-w-screen-xl px-4 pt-3 sm:px-6 lg:px-8">
-        <div className="rounded-lg border border-[#d8d3ca] bg-white px-3 py-2.5 sm:px-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">
-                {visibleProducts.length} {visibleProducts.length === 1 ? 'product' : 'products'}
-              </p>
-              <h2 className="text-base font-semibold text-[#111111]">Shop {title}</h2>
+      {/* ─── Product Count ─── */}
+      <div className="mx-auto max-w-screen-xl px-4 pt-4 sm:px-6 lg:px-8">
+        <p className="text-[12px] text-[#6B625A]">
+          Showing {visibleProducts.length} of {filteredProducts.length} Products
+        </p>
+      </div>
+
+      {/* ─── Product Grid ─── */}
+      <div className="mx-auto max-w-screen-xl px-4 pt-3 pb-8 sm:px-6 lg:px-8">
+        {filteredProducts.length > 0 ? (
+          <>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 sm:gap-4">
+              {visibleProducts.map((product) => {
+                const sz = product.sizes?.[0] || 'O/S';
+                const cl = product.colors?.[0] || { name: 'Default', hex: '#111111' };
+                const itemId = `${product.id}-${sz}-${cl.name.toLowerCase()}`;
+                const qty = cartItems.find((i) => i.id === itemId)?.quantity || 0;
+                return (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onSelect={onSelectProduct}
+                    onAddToCart={onAddToCart}
+                    cartQty={qty}
+                    cartItemId={itemId}
+                    onUpdateQuantity={onUpdateQuantity}
+                    onRemoveItem={onRemoveItem}
+                    onToggleWishlist={onToggleWishlist}
+                    isWishlisted={isWishlisted?.(product.id)}
+                  />
+                );
+              })}
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              {/* Gender filter - hide if category says 'none' */}
-              {category?.genderFilter !== 'none' && (
-                <div className="flex rounded-full border border-[#d8d3ca] overflow-hidden">
+            {/* Load More */}
+            {hasMore && (
+              <div className="mt-8 flex justify-center">
                 <button
                   type="button"
-                  onClick={() => setActiveGender('all')}
-                  className={`px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition ${activeGender === 'all' ? 'bg-[#111111] text-white' : 'bg-white text-[#6f6b62] hover:text-[#111111]'}`}
+                  onClick={() => setVisibleCount((c) => c + ITEMS_PER_PAGE)}
+                  className="h-11 rounded-lg border border-[#111111] px-8 text-[13px] font-semibold text-[#111111] transition hover:bg-[#111111] hover:text-white"
                 >
-                  All
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveGender('men')}
-                  className={`px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider border-l border-[#d8d3ca] transition ${activeGender === 'men' ? 'bg-[#111111] text-white' : 'bg-white text-[#6f6b62] hover:text-[#111111]'}`}
-                >
-                  Men
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveGender('women')}
-                  className={`px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider border-l border-[#d8d3ca] transition ${activeGender === 'women' ? 'bg-[#111111] text-white' : 'bg-white text-[#6f6b62] hover:text-[#111111]'}`}
-                >
-                  Women
-                </button>
-              </div>
-              )}
-              {sizeOptions.length > 0 && (
-                <div className="scrollbar-hide flex flex-nowrap gap-1.5 overflow-x-auto">
-                  <FilterChip label="All" selected={!activeSize} onClick={() => setActiveSize('')} />
-                  {sizeOptions.map((size) => (
-                    <FilterChip key={size} label={size} selected={activeSize === size} onClick={() => setActiveSize(size)} />
-                  ))}
-                </div>
-              )}
-              {tagOptions.length > 0 && (
-                <div className="scrollbar-hide flex flex-nowrap gap-1.5 overflow-x-auto">
-                  <FilterChip label="All" selected={!activeTag} onClick={() => setActiveTag('')} />
-                  {tagOptions.map((tag) => (
-                    <FilterChip key={tag} label={tag} selected={activeTag === tag} onClick={() => setActiveTag(tag)} />
-                  ))}
-                </div>
-              )}
-              {categoryOptions.length > 1 && (
-                <select
-                  value={selectedCategorySlug}
-                  onChange={(event) => onOpenCategory?.(event.target.value)}
-                  className="h-8 rounded-lg border border-gray-300 bg-white px-2 text-xs text-[#111111] outline-none focus:border-[#111111]"
-                >
-                  {categoryOptions.map((item) => (
-                    <option key={item.id} value={item.slug}>{displayCategoryName(item, item.slug)}</option>
-                  ))}
-                </select>
-              )}
-              <select
-                aria-label="Sort products"
-                value={sortMode}
-                onChange={(event) => setSortMode(event.target.value as 'featured' | 'low' | 'high')}
-                className="h-8 rounded-lg border border-gray-300 bg-white px-2 text-xs text-[#111111] outline-none focus:border-[#111111]"
-              >
-                <option value="featured">Featured</option>
-                <option value="low">Price: Low → High</option>
-                <option value="high">Price: High → Low</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust cards — compact */}
-      <section className="mx-auto max-w-screen-xl px-4 pt-3 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-          <ServiceCard icon={ShieldCheck} title="Verified pieces" body="Authenticated and quality checked." />
-          <ServiceCard icon={Ruler} title="Size support" body="Filter by size, check fit details." />
-          <ServiceCard icon={Truck} title="Fast checkout" body="Tracked shipping across India." />
-        </div>
-      </section>
-
-      {/* Product Grid */}
-      <section className="mx-auto max-w-screen-xl px-4 pt-4 sm:px-6 lg:px-8">
-        {visibleProducts.length > 0 ? (
-          <div className={productGridClass}>
-            {visibleProducts.map((product) => {
-              const defaultSize = product.sizes?.[0] || 'O/S';
-              const defaultColor = product.colors?.[0] || { name: 'Default', hex: '#111111' };
-              const itemId = `${product.id}-${defaultSize}-${defaultColor.name.toLowerCase()}`;
-              const qty = cartItems.find(item => item.id === itemId)?.quantity || 0;
-              return (
-                <ProductTile
-                  key={product.id}
-                  product={product}
-                  fallbackImage={heroImage}
-                  onSelectProduct={onSelectProduct}
-                  onAddToCart={onAddToCart}
-                  cartQty={qty}
-                  cartItemId={itemId}
-                  onUpdateQuantity={onUpdateQuantity}
-                  onRemoveItem={onRemoveItem}
-                />
-              );
-            })}
-            {visibleProducts.length < 3 && (
-              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[#DDD8CF] bg-white p-6 text-center">
-                <Sparkles size={20} strokeWidth={1.4} className="text-[#6B625A]" />
-                <p className="mt-2 text-[13px] font-semibold text-[#111111]">More edits coming soon</p>
-                <p className="mt-1 text-[11px] text-[#6B625A]">New drops added every week.</p>
-                <button
-                  type="button"
-                  onClick={onBack}
-                  className="mt-3 inline-flex h-8 items-center gap-1.5 border border-[#111111] px-3 text-[10px] font-semibold text-[#111111] transition hover:bg-[#111111] hover:text-white"
-                >
-                  View all collections
-                  <ArrowRight size={11} />
+                  Load More
                 </button>
               </div>
             )}
-          </div>
+          </>
         ) : (
-          <div className="rounded-lg border border-dashed border-[#cfcac0] bg-white px-6 py-12 text-center">
-            <Sparkles className="mx-auto text-[#111111]" size={22} strokeWidth={1.4} />
-            <p className="mt-3 text-base font-semibold text-[#111111]">No products in this selection</p>
-            <p className="mx-auto mt-1 max-w-xs text-sm text-[#6a665d]">
-              Try another size or switch category.
-            </p>
-            {activeSize && (
-              <button
-                type="button"
-                onClick={() => setActiveSize('')}
-                className="mt-4 h-8 rounded-full border border-[#111111] px-4 font-mono text-[10px] uppercase tracking-widest transition hover:bg-[#111111] hover:text-white"
-              >
-                Clear size filter
-              </button>
-            )}
+          <div className="flex flex-col items-center py-16 text-center">
+            <PackageSearch size={32} className="text-[#6B625A]" />
+            <p className="mt-4 text-[15px] font-semibold text-[#111111]">No products found</p>
+            <p className="mt-1 text-[13px] text-[#6B625A]">Try changing filters or browse another category.</p>
+            <button
+              type="button"
+              onClick={() => { setActiveSize(''); setActiveTag(''); setActiveGender('all'); }}
+              className="mt-4 h-9 rounded-full border border-[#111111] px-5 text-[12px] font-semibold text-[#111111] transition hover:bg-[#111111] hover:text-white"
+            >
+              Clear all filters
+            </button>
           </div>
         )}
-
-        {/* STORY Verified Seal */}
-        <div className="mt-12 flex flex-col items-center text-center">
-          <div className="relative flex h-36 w-36 items-center justify-center sm:h-44 sm:w-44">
-            <div className="absolute inset-0 rounded-full border-[3px] border-[#111111]" />
-            <div className="absolute inset-2 rounded-full border border-[#111111]/50" />
-            <svg className="absolute inset-0 h-full w-full animate-[spin_20s_linear_infinite]" viewBox="0 0 200 200">
-              <defs>
-                <path id="categorySealCircle" d="M100,100 m-68,0 a68,68 0 1,1 136,0 a68,68 0 1,1 -136,0" fill="none" />
-              </defs>
-              <text className="fill-[#111111]" style={{ fontSize: '10px', fontFamily: 'Inter, sans-serif', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-                <textPath href="#categorySealCircle" startOffset="0%">Verified authentic • 100% original • Best price &amp; quality • </textPath>
-              </text>
-            </svg>
-            <div className="flex flex-col items-center">
-              <span className="font-display text-xl font-black tracking-[0.08em] text-[#111111] sm:text-2xl">STORY</span>
-              <span className="mt-0.5 text-[7px] font-medium uppercase tracking-[0.18em] text-[#6B625A] sm:text-[8px]">Verified Garment</span>
-            </div>
-          </div>
-          <p className="mt-4 max-w-xs text-[12px] text-[#6B625A]">Every piece is authenticated and quality checked before it reaches you.</p>
-        </div>
-      </section>
+      </div>
     </motion.div>
   );
 };

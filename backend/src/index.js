@@ -17,6 +17,7 @@ import { ordersRouter, adminOrdersRouter } from './modules/orders/router.js';
 import { paymentRouter, razorpayWebhookHandler } from './modules/payment/router.js';
 import { settingsRouter, adminSettingsRouter } from './modules/settings/router.js';
 import { profileRouter } from './modules/profile/router.js';
+import { wishlistRouter } from './modules/wishlist/router.js';
 import { adminRouter } from './modules/admin/router.js';
 import { contactRouter, adminContactRouter } from './modules/contact/router.js';
 import { reviewsRouter, adminReviewsRouter } from './modules/reviews/router.js';
@@ -95,6 +96,7 @@ app.use('/api/orders', ordersRouter);
 app.use('/api/payment', paymentRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/profile', profileRouter);
+app.use('/api/wishlist', wishlistRouter);
 app.use('/api/contact', contactRouter);
 app.use('/api/reviews', reviewsRouter);
 

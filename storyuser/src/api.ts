@@ -279,11 +279,11 @@ const cartItemsFromResponse = (cart: any): CartItem[] => (cart.items || []).map(
 
 const toAddressPayload = (address: Address, profile: UserProfile) => ({
   label: address.label || 'Home',
-  name: address.fullName || `${profile.firstName} ${profile.lastName}`.trim() || 'STORY Client',
-  phone: address.phone || profile.phone || '+91 98765 43210',
-  line1: address.line1 || address.street || '12 Kala Ghoda Lane',
+  name: address.fullName || `${profile.firstName} ${profile.lastName}`.trim() || '',
+  phone: address.phone || profile.phone || '',
+  line1: address.line1 || address.street || '',
   line2: address.line2 || '',
-  city: address.cityName || 'Mumbai',
+  city: address.cityName || '',
   state: address.state || 'Maharashtra',
   pincode: address.pincode || '400001',
   country: address.country || 'India',

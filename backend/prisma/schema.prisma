@@ -24,6 +24,7 @@ model User {
   addresses           Address[]
   cartItems           CartItem[]
   orders              Order[]
+  wishlists           Wishlist[]
   passwordResetTokens PasswordResetToken[]
 
   @@map("users")
@@ -107,8 +108,21 @@ model Product {
   category        Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   cartItems       CartItem[]
   orderItems      OrderItem[]
+  wishlists       Wishlist[]
 
   @@map("products")
+}
+
+model Wishlist {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  productId String   @db.Uuid
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("wishlists")
 }
 
 model CartItem {

@@ -34,7 +34,15 @@ export const env = {
   smtpPort: Number(process.env.SMTP_PORT || 587),
   smtpUser: process.env.SMTP_USER,
   smtpPass: process.env.SMTP_PASS,
-  emailFrom: process.env.EMAIL_FROM || 'STORY India <orders@story.in>'
+  emailFrom: process.env.EMAIL_FROM || 'STORY India <orders@story.in>',
+  // Backblaze B2 Storage
+  b2KeyId: process.env.B2_KEY_ID,
+  b2AppKey: process.env.B2_APP_KEY,
+  b2BucketName: process.env.B2_BUCKET_NAME || 'story-india-images',
+  b2BucketId: process.env.B2_BUCKET_ID,
+  imageBaseUrl: process.env.IMAGE_BASE_URL || '',
+  maxImageWidth: Number(process.env.MAX_IMAGE_WIDTH || 1200),
+  imageQuality: Number(process.env.IMAGE_QUALITY || 80)
 };
 
 export const isProduction = env.nodeEnv === 'production';

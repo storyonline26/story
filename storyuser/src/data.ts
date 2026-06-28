@@ -1,22 +1,15 @@
 import { Product, UserProfile } from './types';
 
 export const INITIAL_USER_PROFILE: UserProfile = {
-  firstName: "Ananya",
-  lastName: "Sharma",
-  email: "ananya.sharma@story.in",
-  phone: "+91 98765 43210",
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
   language: "ENGLISH",
-  newsletter: true
+  newsletter: false
 };
 
-export const INSTANT_ADDRESSES = [
-  {
-    fullName: "Ananya Sharma",
-    street: "12 Kala Ghoda Lane",
-    city: "Mumbai, Maharashtra 400001",
-    country: "India"
-  }
-];
+export const INSTANT_ADDRESSES = [];
 
 export const PRODUCTS: Product[] = [
   // Grid 1: Our Products Row

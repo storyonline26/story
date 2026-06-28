@@ -2,7 +2,6 @@
 import { ArrowRight, CheckCircle2, Truck, RotateCcw, Headphones, Star } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Category, Product, StorefrontContent } from '../types';
-import { PRODUCTS } from '../data';
 import { formatINR } from '../utils/currency';
 import { HeroSection } from './HeroSection';
 import { BrandLogoMarquee } from './BrandLogoMarquee';
@@ -21,7 +20,7 @@ const productMatchesCategory = (product: Product, category: Category) =>
   product.categoryId === category.id || product.category.toLowerCase() === category.name.toLowerCase();
 
 export const ShopView: React.FC<ShopViewProps> = ({ onSelectProduct, setActiveScreen, onOpenCategory, products, categories = [], content }) => {
-  const productSource = products && products.length > 0 ? products : PRODUCTS;
+  const productSource = products && products.length > 0 ? products : [];
 
   const scrollToProducts = () => {
     window.setTimeout(() => {

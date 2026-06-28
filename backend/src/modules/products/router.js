@@ -7,7 +7,7 @@ import { asyncHandler } from '../../utils/asyncHandler.js';
 import { ApiError } from '../../utils/ApiError.js';
 import { serializeProduct } from '../../utils/serializers.js';
 import { uniqueSlug } from '../../utils/slugify.js';
-import { uploadBufferToLocal, uploadBulkToLocal } from '../../utils/localUpload.js';
+import { uploadToB2, uploadBulkToB2 } from '../../utils/b2Upload.js';
 import { upload, bulkUpload } from '../../middleware/upload.js';
 
 export const productsRouter = express.Router();
@@ -77,10 +77,10 @@ const resolveCategoryId = async ({ categoryId, categorySlug }) => {
 
 const normalizeProductInput = async (body, imageFiles = [], secondaryImageFile) => {
   const uploadedImages = imageFiles.length
-    ? await Promise.all(imageFiles.map((file) => uploadBufferToLocal(file, 'products')))
+    ? await Promise.all(imageFiles.map((file) => uploadToB2(file, 'products')))
     : [];
   const uploadedSecondaryImage = secondaryImageFile
-    ? await uploadBufferToLocal(secondaryImageFile, 'products')
+    ? await uploadToB2(secondaryImageFile, 'products')
     : undefined;
   const hasBodyImages = body.images !== undefined && body.images !== null && body.images !== '';
   const bodyImages = hasBodyImages ? parseMaybeJson(body.images, []) : undefined;
@@ -273,7 +273,7 @@ adminProductsRouter.post('/bulk', bulkProductUpload, asyncHandler(async (req, re
     const productFiles = allFiles.slice(fileIndex, fileIndex + imageCount);
     fileIndex += imageCount;
 
-    const uploadedUrls = await uploadBulkToLocal(productFiles, 'products');
+    const uploadedUrls = await uploadBulkToB2(productFiles, 'products');
     const bodyImages = parseMaybeJson(input.images, []);
     const images = [...bodyImages, ...uploadedUrls].filter(Boolean);
 

@@ -275,6 +275,10 @@ export const BagView: React.FC<BagViewProps> = ({
                           <p className="font-mono text-[10px] uppercase tracking-widest text-[#6f6b62]">
                             {item.selectedColor.name} / {item.selectedSize}
                           </p>
+                          <p className="mt-1 flex items-center gap-1.5 text-[11px] text-[#6B625A]">
+                            <Truck size={11} strokeWidth={1.5} className="text-[#111111]" />
+                            Delivery by {new Date(Date.now() + 5 * 86400000).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}
+                          </p>
                           <p className="font-mono text-xs font-semibold text-[#111111] sm:hidden">
                             {formatINR(item.product.price * item.quantity)}
                           </p>
@@ -528,6 +532,12 @@ export const BagView: React.FC<BagViewProps> = ({
                   <span>{formatINR(total)}</span>
                 </div>
 
+                {(couponApplied || shipping === 0) && (
+                  <div className="mt-3 rounded-md bg-emerald-50 px-4 py-2.5 text-center text-[12px] font-semibold text-emerald-700">
+                    🎉 You save {formatINR((couponApplied?.discount || 0) + (subtotal >= 5000 ? 149 : 0))} on this order
+                  </div>
+                )}
+
                 {isLoggedIn ? (
                   <button
                     onClick={() => onCheckout(couponApplied?.code)}
@@ -550,9 +560,10 @@ export const BagView: React.FC<BagViewProps> = ({
                 )}
 
                 <div className="mt-5 grid gap-3 border-t border-[#ece9e1] pt-5">
-                  <TrustLine icon={ShieldCheck} text={paymentMethod === 'cod' ? 'Order confirmed before dispatch' : 'Encrypted Razorpay checkout'} />
-                  <TrustLine icon={MapPin} text="Tracked India delivery" />
-                  <TrustLine icon={CreditCard} text="Invoice available in account orders" />
+                  <TrustLine icon={ShieldCheck} text="100% authentic products" />
+                  <TrustLine icon={LockKeyhole} text="Secure Razorpay checkout" />
+                  <TrustLine icon={Truck} text="Tracked India delivery" />
+                  <TrustLine icon={CreditCard} text="UPI, Cards, Netbanking, Wallets" />
                 </div>
               </div>
             </aside>

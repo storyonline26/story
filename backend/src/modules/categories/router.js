@@ -8,7 +8,7 @@ import { asyncHandler } from '../../utils/asyncHandler.js';
 import { ApiError } from '../../utils/ApiError.js';
 import { serializeCategory, serializeProduct } from '../../utils/serializers.js';
 import { uniqueSlug } from '../../utils/slugify.js';
-import { uploadBufferToLocal } from '../../utils/localUpload.js';
+import { uploadToB2 } from '../../utils/b2Upload.js';
 
 export const categoriesRouter = express.Router();
 export const adminCategoriesRouter = express.Router();
@@ -67,7 +67,7 @@ adminCategoriesRouter.get('/', asyncHandler(async (_req, res) => {
 }));
 
 adminCategoriesRouter.post('/', upload.single('image'), validate(z.object({ body: bodySchema })), asyncHandler(async (req, res) => {
-  const uploaded = req.file ? await uploadBufferToLocal(req.file, 'categories') : undefined;
+  const uploaded = req.file ? await uploadToB2(req.file, 'categories') : undefined;
   const category = await prisma.category.create({
     data: {
       ...req.validated.body,
@@ -83,7 +83,7 @@ adminCategoriesRouter.put('/:id', upload.single('image'), validate(z.object({
   params: z.object({ id: z.string().uuid() }),
   body: bodySchema.partial()
 })), asyncHandler(async (req, res) => {
-  const uploaded = req.file ? await uploadBufferToLocal(req.file, 'categories') : undefined;
+  const uploaded = req.file ? await uploadToB2(req.file, 'categories') : undefined;
   const data = {
     ...req.validated.body,
     ...(req.validated.body.name ? { slug: uniqueSlug(req.validated.body.name) } : {}),
