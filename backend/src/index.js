@@ -50,6 +50,9 @@ const corsOptions = {
       process.env.ADMIN_FRONTEND_URL
     ].filter(Boolean).map(o => o.replace(/\/$/, ''));
 
+    // Block raw IP access
+    if (/^https?:\/\/\d+\.\d+\.\d+\.\d+/.test(origin)) return callback(null, false);
+
     // Exact match or same domain with any port
     const isAllowed = allowedOrigins.some(allowed => {
       const allowedDomain = allowed.replace(/^https?:\/\//, '').split(':')[0];
@@ -58,7 +61,7 @@ const corsOptions = {
     });
 
     if (isAllowed) return callback(null, true);
-    callback(new Error(`CORS blocked for origin: ${origin}`));
+    callback(null, false); // silent deny — no error log spam
   },
   credentials: true
 };
