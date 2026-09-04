@@ -333,8 +333,12 @@ async function main() {
     }
   });
 
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@story.in';
-  const adminPassword = process.env.ADMIN_PASSWORD || 'StoryAdmin@2026';
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminEmail || !adminPassword) {
+    console.warn('Skipping admin seed: ADMIN_EMAIL and ADMIN_PASSWORD env vars not set.');
+    return;
+  }
   const passwordHash = await bcrypt.hash(adminPassword, 12);
 
   await prisma.user.upsert({

@@ -107,3 +107,9 @@ playwright/.cache/
 .auth/
 
 .env.test
+
+# Credential files — never commit
+a.txt
+cookies.txt
+*.key
+*.pem
