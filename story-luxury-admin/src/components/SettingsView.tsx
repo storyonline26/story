@@ -12,7 +12,7 @@ import ImageInput from './ImageInput';
 interface SettingsViewProps {
   settings: StoreSettings;
   products: Product[];
-  onSaveSettings: (updated: StoreSettings) => void;
+  onSaveSettings: (updated: StoreSettings) => Promise<void>;
 }
 
 const productKey = (product: Product) => product.id || product.sku;
@@ -134,14 +134,13 @@ export default function SettingsView({ settings, products, onSaveSettings }: Set
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setSuccess(false);
-
-    // Simulated short timeout saving sequence
-    setTimeout(() => {
-      onSaveSettings({
+    try {
+      await onSaveSettings({
+        ...settings,
         storeName,
         currency,
         contactEmail,
@@ -180,10 +179,11 @@ export default function SettingsView({ settings, products, onSaveSettings }: Set
         recommendationTitle,
         recommendationProductIds
       });
-      setSaving(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 2500);
-    }, 850);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (

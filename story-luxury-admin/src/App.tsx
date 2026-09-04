@@ -61,7 +61,7 @@ export default function App() {
   const [dataError, setDataError] = useState('');
   const [dataLoading, setDataLoading] = useState(false);
   const [globalSaveSuccess, setGlobalSaveSuccess] = useState('');
-  const [loginEmail, setLoginEmail] = useState('admin@story.in');
+  const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
   // Core reactive data persistent engines
