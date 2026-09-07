@@ -30,6 +30,9 @@ interface BagViewProps {
   onPaymentMethodChange: (method: 'online' | 'cod') => void;
   onlinePaymentEnabled: boolean;
   codEnabled: boolean;
+  deliveryFee?: number;
+  freeDeliveryAbove?: number;
+  gstPercentage?: number;
   isLoggedIn: boolean;
   onLoginRedirect: () => void;
   isCheckingOut?: boolean;
@@ -79,6 +82,9 @@ export const BagView: React.FC<BagViewProps> = ({
   onPaymentMethodChange,
   onlinePaymentEnabled,
   codEnabled,
+  deliveryFee = 149,
+  freeDeliveryAbove = 5000,
+  gstPercentage = 18,
   isLoggedIn,
   onLoginRedirect,
   isCheckingOut = false,
@@ -94,10 +100,10 @@ export const BagView: React.FC<BagViewProps> = ({
     cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
   ), [cartItems]);
 
-  const { shipping, tax, total } = calculateIndiaOrderTotals(subtotal, couponApplied?.discount);
+  const { shipping, tax, total } = calculateIndiaOrderTotals(subtotal, couponApplied?.discount, deliveryFee, freeDeliveryAbove, gstPercentage);
   const primaryAddress = addresses.find((address) => address.id === selectedAddressId) || addresses.find((address) => address.isDefault) || addresses[0];
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const freeShippingRemaining = Math.max(0, 5000 - subtotal);
+  const freeShippingRemaining = Math.max(0, freeDeliveryAbove - subtotal);
   const [deliveryEditorOpen, setDeliveryEditorOpen] = React.useState(false);
   const [addressDraft, setAddressDraft] = React.useState<Address>(() => addressDraftFrom(primaryAddress));
   const [addressSaving, setAddressSaving] = React.useState(false);
