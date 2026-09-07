@@ -189,7 +189,7 @@ export const BagView: React.FC<BagViewProps> = ({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35 }}
       id="bag-view-container"
-      className="bg-[#f6f5f1] px-4 py-8 text-[#111111] sm:px-6 lg:px-10 lg:py-12"
+      className="bg-[#f6f5f1] px-4 py-8 pb-32 text-[#111111] sm:px-6 lg:px-10 lg:py-12 lg:pb-12"
     >
       <div className="mx-auto max-w-7xl">
         <header className="mb-6 rounded-lg border border-[#dedbd2] bg-white p-5 shadow-sm sm:p-6">
@@ -473,7 +473,7 @@ export const BagView: React.FC<BagViewProps> = ({
                   <SummaryRow label="Subtotal" value={formatINR(subtotal)} />
                   {couponApplied && <SummaryRow label={`Coupon (${couponApplied.code})`} value={`-${formatINR(couponApplied.discount)}`} highlight />}
                   <SummaryRow label="Shipping" value={shipping === 0 ? 'Complimentary' : formatINR(shipping)} highlight={shipping === 0} />
-                  <SummaryRow label="GST (18%)" value={formatINR(tax)} />
+                  <SummaryRow label={`GST (${gstPercentage}%)`} value={tax < 1 ? 'Incl.' : formatINR(tax)} />
                 </div>
 
                 {/* Coupon Input */}
@@ -534,7 +534,7 @@ export const BagView: React.FC<BagViewProps> = ({
 
                 {(couponApplied || shipping === 0) && (
                   <div className="mt-3 rounded-md bg-emerald-50 px-4 py-2.5 text-center text-[12px] font-semibold text-emerald-700">
-                    🎉 You save {formatINR((couponApplied?.discount || 0) + (subtotal >= 5000 ? 149 : 0))} on this order
+                    🎉 You save {formatINR((couponApplied?.discount || 0) + (subtotal >= freeDeliveryAbove ? deliveryFee : 0))} on this order
                   </div>
                 )}
 
@@ -542,7 +542,7 @@ export const BagView: React.FC<BagViewProps> = ({
                   <button
                     onClick={() => onCheckout(couponApplied?.code)}
                     disabled={checkoutBlocked}
-                    className="mt-5 flex h-[52px] w-full items-center justify-center gap-2 rounded-md border border-[#111111] bg-[#111111] px-5 font-mono text-[10px] font-bold uppercase tracking-widest text-white transition hover:bg-black disabled:cursor-wait disabled:opacity-70"
+                    className="mt-5 hidden h-[52px] w-full items-center justify-center gap-2 rounded-md border border-[#111111] bg-[#111111] px-5 font-mono text-[10px] font-bold uppercase tracking-widest text-white transition hover:bg-black disabled:cursor-wait disabled:opacity-70 lg:flex"
                     id="checkout-proceed-btn"
                   >
                     {isCheckingOut ? (checkoutMessage || 'Opening payment') : checkoutLabel}

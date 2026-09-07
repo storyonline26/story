@@ -251,7 +251,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       setSelectedOrderId(null);
                     }}
                     aria-pressed={isActive}
-                    className={`flex shrink-0 items-center gap-2 rounded-md px-4 py-2.5 text-center transition lg:w-full lg:justify-start lg:rounded-none lg:border-b lg:border-[#EFECE6] lg:px-4 lg:py-3.5 lg:last:border-b-0 ${
+                    className={`flex shrink-0 items-center gap-2 rounded-md px-4 py-3 text-center transition lg:w-full lg:justify-start lg:rounded-none lg:border-b lg:border-[#EFECE6] lg:px-4 lg:py-3.5 lg:last:border-b-0 ${
                       isActive ? 'bg-[#111111] text-white' : 'text-[#6B625A] hover:bg-[#F8F6F1] hover:text-[#111111]'
                     }`}
                     id={`sidebar-tab-${tab.id}`}
@@ -327,7 +327,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       <button
                         type="button"
                         onClick={() => {
-                          setActiveTab('settings');
+                          setActiveTab('addresses');
                           setIsEditingAddress(true);
                         }}
                         className="mt-5 inline-flex h-10 items-center gap-2 rounded-md border border-[#111111] px-4 font-mono text-[10px] uppercase tracking-widest transition hover:bg-[#111111] hover:text-white"

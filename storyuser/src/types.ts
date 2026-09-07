@@ -163,6 +163,9 @@ export interface StorefrontContent {
   razorpayActive: boolean;
   onlinePaymentEnabled: boolean;
   codEnabled: boolean;
+  deliveryFee: number;
+  freeDeliveryAbove: number;
+  gstPercentage: number;
   privacyPolicy: string;
   termsConditions: string;
   returnRefundPolicy: string;

@@ -108,7 +108,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-white pb-20 lg:pb-8"
+      className="bg-white pb-28 lg:pb-8"
       id="product-detail-view-container"
     >
       <div className="mx-auto max-w-[1200px] px-4 pt-3 sm:px-6 lg:px-8 lg:pt-6">

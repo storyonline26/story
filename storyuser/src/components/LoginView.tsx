@@ -378,7 +378,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
             </div>
 
             {isCheckout && (
-              <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="mb-8 hidden grid-cols-1 gap-3 sm:grid sm:grid-cols-3">
                 {CHECKOUT_POINTS.map(({ icon: Icon, label, text }) => (
                   <div key={label} className="border border-[#deded9] bg-white p-4">
                     <Icon size={16} strokeWidth={1.5} />

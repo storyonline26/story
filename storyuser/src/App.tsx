@@ -146,6 +146,9 @@ const DEFAULT_STOREFRONT_CONTENT: StorefrontContent = {
   razorpayActive: true,
   onlinePaymentEnabled: true,
   codEnabled: false,
+  deliveryFee: 149,
+  freeDeliveryAbove: 5000,
+  gstPercentage: 18,
   privacyPolicy: 'We respect your privacy and use customer information only to process orders, provide support, improve the shopping experience, and meet legal or payment requirements. We do not sell customer data. Payment information is processed securely by our payment partners.',
   termsConditions: 'By using STORY India, you agree to provide accurate account, delivery, and payment information. Product availability, pricing, promotions, and delivery timelines may change without prior notice. Orders are confirmed only after successful payment and verification.',
   returnRefundPolicy: 'Returns or exchanges may be requested for eligible unused products within the return window shown at purchase. Items must be returned with tags, packaging, and invoice. Refunds are processed to the original payment method after quality check approval.'
@@ -773,6 +776,9 @@ export default function App() {
             onPaymentMethodChange={setCheckoutPaymentMethod}
             onlinePaymentEnabled={storefrontContent.onlinePaymentEnabled && storefrontContent.razorpayActive}
             codEnabled={storefrontContent.codEnabled}
+            deliveryFee={Number(storefrontContent.deliveryFee ?? 149)}
+            freeDeliveryAbove={Number(storefrontContent.freeDeliveryAbove ?? 5000)}
+            gstPercentage={Number(storefrontContent.gstPercentage ?? 18)}
             isLoggedIn={isLoggedIn}
             isCheckingOut={checkoutBusy}
             checkoutMessage={checkoutMessage}
